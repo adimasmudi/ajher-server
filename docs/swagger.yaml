@@ -1,4 +1,60 @@
+definitions:
+  user.RegisterUserInput:
+    properties:
+      confirmPassword:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - confirmPassword
+    - email
+    - password
+    - username
+    type: object
+  user.User:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      gender:
+        type: string
+      password:
+        type: string
+      picture:
+        type: string
+      userId:
+        type: integer
+      username:
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Adding new user to the database
+      parameters:
+      - description: User Data
+        in: body
+        name: registerUserInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.RegisterUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: signup
+      tags:
+      - User Authentication
 swagger: "2.0"
