@@ -15,7 +15,116 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/register": {
+        "/user/login": {
+            "post": {
+                "description": "Login user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "login",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "loginUserInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.LoginUserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/profile": {
+            "get": {
+                "description": "Get user profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "get profile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.User"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/refreshToken": {
+            "post": {
+                "description": "Refresh JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "refresh token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "refreshTokenInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RefreshTokenInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/register": {
             "post": {
                 "description": "Adding new user to the database",
                 "consumes": [
@@ -27,7 +136,7 @@ const docTemplate = `{
                 "tags": [
                     "User Authentication"
                 ],
-                "summary": "signup",
+                "summary": "register",
                 "parameters": [
                     {
                         "description": "User Data",
@@ -43,7 +152,40 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user.User"
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/validateToken": {
+            "get": {
+                "description": "Validate JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "validate token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
                         }
                     }
                 }
@@ -51,6 +193,35 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.TokenObject": {
+            "type": "object"
+        },
+        "user.LoginUserInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.RefreshTokenInput": {
+            "type": "object",
+            "required": [
+                "accessToken"
+            ],
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                }
+            }
+        },
         "user.RegisterUserInput": {
             "type": "object",
             "required": [
@@ -77,6 +248,9 @@ const docTemplate = `{
         "user.User": {
             "type": "object",
             "properties": {
+                "ID": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -91,9 +265,6 @@ const docTemplate = `{
                 },
                 "picture": {
                     "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 },
                 "username": {
                     "type": "string"

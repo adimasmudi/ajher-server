@@ -1,4 +1,23 @@
 definitions:
+  controllers.TokenObject:
+    type: object
+  user.LoginUserInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  user.RefreshTokenInput:
+    properties:
+      accessToken:
+        type: string
+    required:
+    - accessToken
+    type: object
   user.RegisterUserInput:
     properties:
       confirmPassword:
@@ -17,6 +36,8 @@ definitions:
     type: object
   user.User:
     properties:
+      ID:
+        type: integer
       email:
         type: string
       fullName:
@@ -27,15 +48,85 @@ definitions:
         type: string
       picture:
         type: string
-      userId:
-        type: integer
       username:
         type: string
     type: object
 info:
   contact: {}
 paths:
-  /register:
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user
+      parameters:
+      - description: User Data
+        in: body
+        name: loginUserInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.LoginUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: login
+      tags:
+      - User Authentication
+  /user/profile:
+    get:
+      consumes:
+      - application/json
+      description: Get user profile
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: get profile
+      tags:
+      - User Authentication
+  /user/refreshToken:
+    post:
+      consumes:
+      - application/json
+      description: Refresh JWT token
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: refreshTokenInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.RefreshTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: refresh token
+      tags:
+      - User Authentication
+  /user/register:
     post:
       consumes:
       - application/json
@@ -53,8 +144,30 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
-      summary: signup
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: register
+      tags:
+      - User Authentication
+  /user/validateToken:
+    get:
+      consumes:
+      - application/json
+      description: Validate JWT token
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: validate token
       tags:
       - User Authentication
 swagger: "2.0"
