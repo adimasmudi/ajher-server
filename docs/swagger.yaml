@@ -1,5 +1,17 @@
 definitions:
   controllers.TokenObject:
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+    type: object
+  user.GoogleOAuthInput:
+    properties:
+      accessToken:
+        type: string
+    required:
+    - accessToken
     type: object
   user.LoginUserInput:
     properties:
@@ -54,6 +66,28 @@ definitions:
 info:
   contact: {}
 paths:
+  /user/googleAuth:
+    post:
+      consumes:
+      - application/json
+      description: Google Auth
+      parameters:
+      - description: User Data
+        in: body
+        name: googleOAuthInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.GoogleOAuthInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: google auth
+      tags:
+      - User Authentication
   /user/login:
     post:
       consumes:

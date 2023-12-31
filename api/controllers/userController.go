@@ -17,11 +17,10 @@ func NewUserHandler(userService user.Service) *userHandler {
 	return &userHandler{userService}
 }
 
-// token object
-
+// Token Object
 type TokenObject struct {
-	accessToken  string
-	refreshToken string
+	AccessToken  string
+	RefreshToken string
 }
 
 // Signup  godoc
@@ -115,6 +114,50 @@ func (h *userHandler) Login(ctx *gin.Context) {
 	}
 
 	response := utils.APIResponse("Login success", http.StatusOK, "success", token)
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+// google auth  godoc
+//
+// @Summary  google auth
+// @Description Google Auth
+// @Tags   User Authentication
+// @Accept   json
+// @Produce  json
+// @Param   googleOAuthInput body  user.GoogleOAuthInput true "User Data"
+// @Success  200   {object} TokenObject
+// @Router   /user/googleAuth [post]
+func (h *userHandler) GoogleAuth(ctx *gin.Context) {
+	var input user.GoogleOAuthInput
+
+	err := ctx.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := utils.APIResponse("Google Auth Failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		ctx.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	logedinUser, err := h.userService.GoogleAuth(input)
+
+	if err != nil {
+		response := utils.APIResponse("Google Auth Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	token, err := utils.GenerateToken(logedinUser.ID)
+
+	if err != nil {
+		response := utils.APIResponse("Google Auth Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := utils.APIResponse("Google Auth success", http.StatusOK, "success", token)
 
 	ctx.JSON(http.StatusOK, response)
 }

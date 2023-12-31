@@ -15,3 +15,7 @@ type LoginUserInput struct {
 type RefreshTokenInput struct {
 	AccessToken string `json:"accessToken" binding:"required"`
 }
+
+type GoogleOAuthInput struct {
+	OAuthAccessToken string `json:"accessToken" binding:"required"`
+}

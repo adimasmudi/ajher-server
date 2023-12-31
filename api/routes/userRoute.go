@@ -29,4 +29,5 @@ func UserRoute(api *gin.RouterGroup, database *gorm.DB) {
 	userRoute.GET("/profile", authMiddleware.AuthMiddleware, userHandler.GetProfile)
 	userRoute.GET("/validateToken", authMiddleware.AuthMiddleware, userHandler.ValidateToken)
 	userRoute.POST("/refreshToken", authMiddleware.RefreshTokenMiddleware, userHandler.RefreshToken)
+	userRoute.POST("/googleAuth", userHandler.GoogleAuth)
 }
