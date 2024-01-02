@@ -241,10 +241,10 @@ const docTemplate = `{
         "user.GoogleOAuthInput": {
             "type": "object",
             "required": [
-                "accessToken"
+                "oAuthAccessToken"
             ],
             "properties": {
-                "accessToken": {
+                "oAuthAccessToken": {
                     "type": "string"
                 }
             }
