@@ -192,6 +192,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/resetPassword": {
+            "post": {
+                "description": "Send email consist of OTP to user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "reset password",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "resetPasswordInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.ResetPasswordInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
+        },
         "/user/validateToken": {
             "get": {
                 "description": "Validate JWT token",
@@ -298,11 +332,22 @@ const docTemplate = `{
                 }
             }
         },
+        "user.ResetPasswordInput": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "user.User": {
             "type": "object",
             "properties": {
                 "ID": {
                     "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
                 },
                 "email": {
                     "type": "string"
@@ -313,10 +358,16 @@ const docTemplate = `{
                 "gender": {
                     "type": "string"
                 },
+                "last_login": {
+                    "type": "string"
+                },
                 "password": {
                     "type": "string"
                 },
                 "picture": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 },
                 "username": {

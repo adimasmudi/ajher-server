@@ -19,3 +19,7 @@ type RefreshTokenInput struct {
 type GoogleOAuthInput struct {
 	OAuthAccessToken string `json:"oAuthAccessToken" binding:"required"`
 }
+
+type ResetPasswordInput struct {
+	Email string `json:"email"`
+}

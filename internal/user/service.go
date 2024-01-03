@@ -1,8 +1,11 @@
 package user
 
 import (
+	"ajher-server/internal/otp"
 	"ajher-server/utils"
 	"errors"
+	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -14,6 +17,7 @@ type Service interface {
 	Login(input LoginUserInput) (User, error)
 	GetUserById(userId int) (User, error)
 	GoogleAuth(input GoogleOAuthInput) (User, error)
+	GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error)
 }
 
 type service struct {
@@ -125,5 +129,28 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 	}
 
 	return newUser, nil
+}
 
+func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error) {
+	otp := otp.Otp{}
+	if !utils.IsEmailValid(input.Email) {
+		return otp, errors.New("email is not valid")
+	}
+
+	user, err := s.repository.FindByEmail(input.Email)
+
+	if err != nil {
+		return otp, err
+	}
+
+	otpString := utils.EncodeToString(4)
+
+	to := []string{user.Email}
+	cc := []string{os.Getenv("CONFIG_AUTH_EMAIL")}
+	subject := "Reset Password OTP Code"
+	message := fmt.Sprintf("Your OTP is %s", otpString)
+
+	err = utils.SendMail(to, cc, subject, message)
+
+	return otp, nil
 }

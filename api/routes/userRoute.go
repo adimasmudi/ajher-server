@@ -30,4 +30,5 @@ func UserRoute(api *gin.RouterGroup, database *gorm.DB) {
 	userRoute.GET("/validateToken", authMiddleware.AuthMiddleware, userHandler.ValidateToken)
 	userRoute.POST("/refreshToken", authMiddleware.RefreshTokenMiddleware, userHandler.RefreshToken)
 	userRoute.POST("/googleAuth", userHandler.GoogleAuth)
+	userRoute.POST("/resetPassword", userHandler.ResetPassword)
 }

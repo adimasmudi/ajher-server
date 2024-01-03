@@ -23,7 +23,7 @@ type TokenObject struct {
 	RefreshToken string
 }
 
-// Signup  godoc
+// Register  godoc
 //
 // @Summary  register
 // @Description Adding new user to the database
@@ -291,5 +291,40 @@ func (h *userHandler) RefreshToken(ctx *gin.Context) {
 	response := utils.APIResponse("Refresh Token success", http.StatusOK, "success", newToken)
 
 	ctx.JSON(http.StatusOK, response)
+}
 
+// Reset Password  godoc
+//
+// @Summary  reset password
+// @Description Send email consist of OTP to user
+// @Tags   User Authentication
+// @Accept   json
+// @Produce  json
+// @Param   resetPasswordInput body  user.ResetPasswordInput true "User Data"
+// @Success  200   {object} TokenObject
+// @Router   /user/resetPassword [post]
+func (h *userHandler) ResetPassword(ctx *gin.Context) {
+	var input user.ResetPasswordInput
+
+	err := ctx.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := utils.APIResponse("Send Email Failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		ctx.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	otp, err := h.userService.GenerateAndSendEmail(input)
+
+	if err != nil {
+		response := utils.APIResponse("Send Email Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := utils.APIResponse("Send Email Success", http.StatusOK, "success", otp)
+
+	ctx.JSON(http.StatusOK, response)
 }

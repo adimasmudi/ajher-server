@@ -1,7 +1,6 @@
 package otp
 
 import (
-	"ajher-server/internal/user"
 	"time"
 )
 
@@ -13,5 +12,4 @@ type Otp struct {
 	ValidUntil string    `json:"validUntil"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
-	User       user.User
 }

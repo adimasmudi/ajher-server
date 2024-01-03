@@ -46,19 +46,30 @@ definitions:
     - password
     - username
     type: object
+  user.ResetPasswordInput:
+    properties:
+      email:
+        type: string
+    type: object
   user.User:
     properties:
       ID:
         type: integer
+      created_at:
+        type: string
       email:
         type: string
       fullName:
         type: string
       gender:
         type: string
+      last_login:
+        type: string
       password:
         type: string
       picture:
+        type: string
+      updated_at:
         type: string
       username:
         type: string
@@ -180,6 +191,28 @@ paths:
           schema:
             $ref: '#/definitions/controllers.TokenObject'
       summary: register
+      tags:
+      - User Authentication
+  /user/resetPassword:
+    post:
+      consumes:
+      - application/json
+      description: Send email consist of OTP to user
+      parameters:
+      - description: User Data
+        in: body
+        name: resetPasswordInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.ResetPasswordInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: reset password
       tags:
       - User Authentication
   /user/validateToken:
