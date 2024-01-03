@@ -2,12 +2,9 @@ package participantRanking
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type ParticipantRanking struct {
-	gorm.Model
 	ID              string    `json:"id"`
 	ParticipationId string    `json:"participation_id"`
 	RankingId       int       `json:"ranking_id"`

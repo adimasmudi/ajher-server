@@ -2,12 +2,9 @@ package quizCategory
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type QuizCategory struct {
-	gorm.Model
 	ID           int       `json:"id"`
 	CategoryName string    `json:"category_name"`
 	Icon         string    `json:"icon"`

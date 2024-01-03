@@ -2,12 +2,9 @@ package ranking
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Ranking struct {
-	gorm.Model
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`
 	Icon      string    `json:"icon"`

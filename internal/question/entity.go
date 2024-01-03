@@ -4,12 +4,9 @@ import (
 	"ajher-server/internal/answer"
 	"ajher-server/internal/questionImage"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Question struct {
-	gorm.Model
 	ID              string    `json:"id"`
 	QuizId          string    `json:"quiz_id"`
 	Question        string    `json:"question"`

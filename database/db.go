@@ -24,5 +24,7 @@ func ConnectDB() *gorm.DB {
 		log.Fatal(err.Error())
 	}
 
+	db = db.Session(&gorm.Session{SkipDefaultTransaction: true})
+
 	return db
 }

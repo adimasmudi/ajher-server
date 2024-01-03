@@ -2,12 +2,9 @@ package answer
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Answer struct {
-	gorm.Model
 	ID                  string    `json:"id"`
 	UserId              int       `json:"user_id"`
 	QuestionId          string    `json:"question_id"`

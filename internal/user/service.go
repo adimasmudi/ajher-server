@@ -4,6 +4,7 @@ import (
 	"ajher-server/utils"
 	"errors"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -13,7 +14,6 @@ type Service interface {
 	Login(input LoginUserInput) (User, error)
 	GetUserById(userId int) (User, error)
 	GoogleAuth(input GoogleOAuthInput) (User, error)
-	// GetProfile(ID int) (User, error)
 }
 
 type service struct {
@@ -25,9 +25,14 @@ func NewService(repository Repository) *service {
 }
 
 func (s *service) Register(input RegisterUserInput) (User, error) {
+
 	user := User{}
+	if !utils.IsEmailValid(input.Email) {
+		return user, errors.New("email is not valid")
+	}
 	user.Email = input.Email
 	user.Username = input.Username
+	user.FullName = input.Username
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 
@@ -51,6 +56,24 @@ func (s *service) Login(input LoginUserInput) (User, error) {
 
 	if err != nil {
 		return user, errors.New("user with that email doesn't exist")
+	}
+
+	if user.ID == 0 {
+		return user, errors.New("User Not Found")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+
+	if err != nil {
+		return user, err
+	}
+
+	user.LastLogin = time.Now()
+
+	newUpdatedLoginUser, err := s.repository.Update(user)
+
+	if err != nil {
+		return newUpdatedLoginUser, err
 	}
 
 	return user, nil
