@@ -366,3 +366,39 @@ func (h *userHandler) VerifyOtp(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+// Change Password  godoc
+//
+// @Summary  change password
+// @Description Change Password user
+// @Tags   User Authentication
+// @Accept   json
+// @Produce  json
+// @Param   changePasswordInput body  user.ChangePasswordUserInput true "User Data"
+// @Success  200   {object} TokenObject
+// @Router   /user/changePassword [post]
+func (h *userHandler) ChangePassword(ctx *gin.Context) {
+	var input user.ChangePasswordUserInput
+
+	err := ctx.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := utils.APIResponse("Change Password Failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		ctx.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	user, err := h.userService.ChangePassword(input)
+
+	if err != nil {
+		response := utils.APIResponse("Change Password Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := utils.APIResponse("Change Password Success", http.StatusOK, "success", user)
+
+	ctx.JSON(http.StatusOK, response)
+}

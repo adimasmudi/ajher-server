@@ -35,4 +35,5 @@ func UserRoute(api *gin.RouterGroup, database *gorm.DB) {
 	userRoute.POST("/googleAuth", userHandler.GoogleAuth)
 	userRoute.POST("/resetPassword", userHandler.ResetPassword)
 	userRoute.POST("/verifyOtp", userHandler.VerifyOtp)
+	userRoute.POST("/changePassword", userHandler.ChangePassword)
 }

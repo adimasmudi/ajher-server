@@ -11,6 +11,15 @@ definitions:
       otp_code:
         type: string
     type: object
+  user.ChangePasswordUserInput:
+    properties:
+      change_password:
+        type: string
+      otp_code:
+        type: string
+      password:
+        type: string
+    type: object
   user.GoogleOAuthInput:
     properties:
       oAuthAccessToken:
@@ -82,6 +91,28 @@ definitions:
 info:
   contact: {}
 paths:
+  /user/changePassword:
+    post:
+      consumes:
+      - application/json
+      description: Change Password user
+      parameters:
+      - description: User Data
+        in: body
+        name: changePasswordInput
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangePasswordUserInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: change password
+      tags:
+      - User Authentication
   /user/googleAuth:
     post:
       consumes:

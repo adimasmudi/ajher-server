@@ -15,6 +15,40 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/user/changePassword": {
+            "post": {
+                "description": "Change Password user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "change password",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "changePasswordInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.ChangePasswordUserInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
+        },
         "/user/googleAuth": {
             "post": {
                 "description": "Google Auth",
@@ -310,6 +344,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "otp_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.ChangePasswordUserInput": {
+            "type": "object",
+            "properties": {
+                "change_password": {
+                    "type": "string"
+                },
+                "otp_code": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

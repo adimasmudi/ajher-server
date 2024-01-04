@@ -23,3 +23,9 @@ type GoogleOAuthInput struct {
 type ResetPasswordInput struct {
 	Email string `json:"email"`
 }
+
+type ChangePasswordUserInput struct {
+	OtpCode         string `json:"otp_code"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"change_password"`
+}

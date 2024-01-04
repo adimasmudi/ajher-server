@@ -18,6 +18,7 @@ type Service interface {
 	GetUserById(userId int) (User, error)
 	GoogleAuth(input GoogleOAuthInput) (User, error)
 	GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error)
+	ChangePassword(input ChangePasswordUserInput) (User, error)
 }
 
 type service struct {
@@ -38,6 +39,7 @@ func (s *service) Register(input RegisterUserInput) (User, error) {
 	user.Email = input.Email
 	user.Username = input.Username
 	user.FullName = input.Username
+	user.LastLogin = time.Now()
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 
@@ -116,12 +118,17 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 
 	isUserExist, err := s.repository.FindByEmail(googleUser.Email)
 
-	if err == nil {
-		return isUserExist, nil
-	}
+	fmt.Println(isUserExist, err)
 
-	if isUserExist.ID == 0 {
-		return isUserExist, errors.New("user with that email doesn't exist")
+	if err == nil && isUserExist.ID != 0 {
+		isUserExist.LastLogin = time.Now()
+
+		newUpdatedLoginUser, err := s.repository.Update(isUserExist)
+
+		if err != nil {
+			return newUpdatedLoginUser, err
+		}
+		return isUserExist, nil
 	}
 
 	userName := strings.Split(googleUser.Email, "@")[0]
@@ -130,6 +137,7 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 	user.Username = userName
 	user.FullName = userName
 	user.Picture = googleUser.Picture
+	user.LastLogin = time.Now()
 
 	newUser, err := s.repository.Save(user)
 
@@ -181,4 +189,39 @@ func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error
 	}
 
 	return savedOtp, nil
+}
+
+func (s *service) ChangePassword(input ChangePasswordUserInput) (User, error) {
+	user := User{}
+
+	if input.Password != input.ConfirmPassword {
+		return user, errors.New("password is not same with confirm password")
+	}
+	otp, err := s.otpRepository.FindByOtpCode(input.OtpCode)
+
+	if err != nil {
+		return user, err
+	}
+
+	oldUser, err := s.repository.GetById(otp.UserId)
+
+	if err != nil {
+		return user, err
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+
+	if err != nil {
+		return user, err
+	}
+
+	oldUser.Password = string(passwordHash)
+
+	newUser, err := s.repository.Update(oldUser)
+
+	if err != nil {
+		return user, err
+	}
+
+	return newUser, nil
 }

@@ -24,8 +24,6 @@ func Auth(ctx *gin.Context) (jwt.MapClaims, error) {
 	authHeader := ctx.GetHeader("Authorization")
 
 	if !strings.Contains(authHeader, "Bearer") {
-		response := utils.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return nil, errors.New("unauthorized")
 	}
 
@@ -38,16 +36,12 @@ func Auth(ctx *gin.Context) (jwt.MapClaims, error) {
 	token, err := utils.ValidateToken(tokenString)
 
 	if err != nil {
-		response := utils.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok || !token.Valid {
-		response := utils.APIResponse("Unauthorized", http.StatusUnauthorized, "error", nil)
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 		return nil, err
 	}
 
