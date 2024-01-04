@@ -16,12 +16,33 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-// func (r *repository) Save(otp Otp) (Otp, error){
+func (r *repository) Save(otp Otp) (Otp, error) {
+	err := r.db.Create(&otp).Error
 
-// }
-// func (r *repository) FindByOtpCode(otpCode string) (Otp, error){
+	if err != nil {
+		return otp, err
+	}
 
-// }
-// func (r *repository) Update(otp Otp) (Otp, error){
+	return otp, nil
+}
 
-// }
+func (r *repository) FindByOtpCode(otpCode string) (Otp, error) {
+	var otp Otp
+	err := r.db.Where("otpcode=?", otpCode).Find(&otp).Error
+
+	if err != nil {
+		return otp, err
+	}
+
+	return otp, nil
+}
+
+func (r *repository) Update(otp Otp) (Otp, error) {
+	err := r.db.Save(&otp).Error
+
+	if err != nil {
+		return otp, err
+	}
+
+	return otp, nil
+}

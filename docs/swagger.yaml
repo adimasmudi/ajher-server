@@ -6,6 +6,11 @@ definitions:
       refreshToken:
         type: string
     type: object
+  otp.VerifyOtpInput:
+    properties:
+      otp_code:
+        type: string
+    type: object
   user.GoogleOAuthInput:
     properties:
       oAuthAccessToken:
@@ -235,6 +240,28 @@ paths:
           schema:
             $ref: '#/definitions/controllers.TokenObject'
       summary: validate token
+      tags:
+      - User Authentication
+  /user/verifyOtp:
+    post:
+      consumes:
+      - application/json
+      description: Verify OTP user
+      parameters:
+      - description: User Data
+        in: body
+        name: verifyOtpInput
+        required: true
+        schema:
+          $ref: '#/definitions/otp.VerifyOtpInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.TokenObject'
+      summary: verify otp
       tags:
       - User Authentication
 swagger: "2.0"

@@ -6,10 +6,10 @@ import (
 
 type Otp struct {
 	ID         int       `json:"id"`
-	UserId     string    `json:"userId"`
+	UserId     int       `json:"userId"`
 	Otpcode    string    `json:"otpCode"`
 	Status     string    `json:"status"`
-	ValidUntil string    `json:"validUntil"`
+	ValidUntil time.Time `json:"validUntil"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdatedAt  time.Time `json:"updated_at"`
 }

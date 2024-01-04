@@ -258,6 +258,40 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/user/verifyOtp": {
+            "post": {
+                "description": "Verify OTP user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Authentication"
+                ],
+                "summary": "verify otp",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "verifyOtpInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/otp.VerifyOtpInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.TokenObject"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -268,6 +302,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "refreshToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "otp.VerifyOtpInput": {
+            "type": "object",
+            "properties": {
+                "otp_code": {
                     "type": "string"
                 }
             }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"ajher-server/internal/otp"
 	"ajher-server/internal/user"
 	"ajher-server/utils"
 	"net/http"
@@ -11,10 +12,11 @@ import (
 
 type userHandler struct {
 	userService user.Service
+	otpService  otp.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, otpService otp.Service) *userHandler {
+	return &userHandler{userService, otpService}
 }
 
 // Token Object
@@ -325,6 +327,42 @@ func (h *userHandler) ResetPassword(ctx *gin.Context) {
 	}
 
 	response := utils.APIResponse("Send Email Success", http.StatusOK, "success", otp)
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+// Verify Otp  godoc
+//
+// @Summary  verify otp
+// @Description Verify OTP user
+// @Tags   User Authentication
+// @Accept   json
+// @Produce  json
+// @Param   verifyOtpInput body  otp.VerifyOtpInput true "User Data"
+// @Success  200   {object} TokenObject
+// @Router   /user/verifyOtp [post]
+func (h *userHandler) VerifyOtp(ctx *gin.Context) {
+	var input otp.VerifyOtpInput
+
+	err := ctx.ShouldBindJSON(&input)
+
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := utils.APIResponse("Verify Otp Failed", http.StatusUnprocessableEntity, "error", errorMessage)
+		ctx.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	otp, err := h.otpService.VerifyOtp(input)
+
+	if err != nil {
+		response := utils.APIResponse("Verify Otp Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := utils.APIResponse("Verify Otp Success", http.StatusOK, "success", otp)
 
 	ctx.JSON(http.StatusOK, response)
 }

@@ -21,11 +21,12 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository    Repository
+	otpRepository otp.Repository
 }
 
-func NewService(repository Repository) *service {
-	return &service{repository}
+func NewService(repository Repository, otpRepository otp.Repository) *service {
+	return &service{repository, otpRepository}
 }
 
 func (s *service) Register(input RegisterUserInput) (User, error) {
@@ -87,6 +88,10 @@ func (s *service) GetUserById(userId int) (User, error) {
 	user, err := s.repository.GetById(userId)
 
 	if err != nil {
+		return user, err
+	}
+
+	if user.ID == 0 {
 		return user, errors.New("user with that id doesn't exist")
 	}
 
@@ -113,6 +118,10 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 
 	if err == nil {
 		return isUserExist, nil
+	}
+
+	if isUserExist.ID == 0 {
+		return isUserExist, errors.New("user with that email doesn't exist")
 	}
 
 	userName := strings.Split(googleUser.Email, "@")[0]
@@ -143,6 +152,10 @@ func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error
 		return otp, err
 	}
 
+	if user.ID == 0 {
+		return otp, errors.New("user with that email doesn't exist")
+	}
+
 	otpString := utils.EncodeToString(4)
 
 	to := []string{user.Email}
@@ -152,5 +165,20 @@ func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error
 
 	err = utils.SendMail(to, cc, subject, message)
 
-	return otp, nil
+	if err != nil {
+		return otp, err
+	}
+
+	otp.UserId = user.ID
+	otp.Otpcode = otpString
+	otp.Status = "valid"
+	otp.ValidUntil = time.Now().UTC().Add(time.Minute)
+
+	savedOtp, err := s.otpRepository.Save(otp)
+
+	if err != nil {
+		return otp, err
+	}
+
+	return savedOtp, nil
 }

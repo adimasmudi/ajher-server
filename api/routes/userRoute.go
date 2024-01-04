@@ -3,6 +3,7 @@ package routes
 import (
 	"ajher-server/api/controllers"
 	"ajher-server/api/middleware"
+	"ajher-server/internal/otp"
 	"ajher-server/internal/user"
 
 	"github.com/gin-gonic/gin"
@@ -14,12 +15,14 @@ func UserRoute(api *gin.RouterGroup, database *gorm.DB) {
 
 	// repository
 	userRepository := user.NewRepository(database)
+	otpRepository := otp.NewRepository(database)
 
 	// services
-	userService := user.NewService(userRepository)
+	userService := user.NewService(userRepository, otpRepository)
+	otpService := otp.NewService(otpRepository)
 
 	// controllers
-	userHandler := controllers.NewUserHandler(userService)
+	userHandler := controllers.NewUserHandler(userService, otpService)
 
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
@@ -31,4 +34,5 @@ func UserRoute(api *gin.RouterGroup, database *gorm.DB) {
 	userRoute.POST("/refreshToken", authMiddleware.RefreshTokenMiddleware, userHandler.RefreshToken)
 	userRoute.POST("/googleAuth", userHandler.GoogleAuth)
 	userRoute.POST("/resetPassword", userHandler.ResetPassword)
+	userRoute.POST("/verifyOtp", userHandler.VerifyOtp)
 }
