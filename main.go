@@ -8,6 +8,8 @@ import (
 	"ajher-server/database"
 	"ajher-server/docs"
 	"ajher-server/internal/otp"
+	"ajher-server/internal/participation"
+	"ajher-server/internal/quiz"
 	"ajher-server/internal/quizCategory"
 	"ajher-server/internal/user"
 
@@ -44,20 +46,25 @@ func main() {
 	api := router.Group("/api/v1")
 	userRoute := api.Group("user")
 	quizCategoryRoute := api.Group("quizCategory")
+	quizRoute := api.Group("quiz")
 
 	// repositories
 	userRepository := user.NewRepository(db)
 	otpRepository := otp.NewRepository(db)
 	quizCategoryRepository := quizCategory.NewRepository(db)
+	quizRepository := quiz.NewRepository(db)
+	participationRepository := participation.NewRepository(db)
 
 	// services
 	userService := user.NewService(userRepository, otpRepository)
 	otpService := otp.NewService(otpRepository)
 	quizCategoryService := quizCategory.NewService(quizCategoryRepository)
+	quizService := quiz.NewService(quizRepository, participationRepository)
 
 	// controllers
 	userHandler := controllers.NewUserHandler(userService, otpService)
 	quizCategoryHandler := controllers.NewQuizCategoryHandler(quizCategoryService)
+	quizHandler := controllers.NewQuizHandler(quizService)
 
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
@@ -77,6 +84,9 @@ func main() {
 	quizCategoryRoute.GET("/", authMiddleware.AuthMiddleware, quizCategoryHandler.GetAll)
 	quizCategoryRoute.GET("/:id", authMiddleware.AuthMiddleware, quizCategoryHandler.GetById)
 	quizCategoryRoute.POST("/save", authMiddleware.AuthMiddleware, quizCategoryHandler.Save)
+
+	// quiz
+	quizRoute.POST("/save", authMiddleware.AuthMiddleware, quizHandler.Save)
 
 	router.Run(":5000")
 

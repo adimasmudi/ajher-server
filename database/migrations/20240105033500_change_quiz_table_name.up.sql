@@ -1,0 +1,1 @@
+ALTER TABLE quizes RENAME TO quizzes

@@ -4,6 +4,48 @@
         "contact": {}
     },
     "paths": {
+        "/quiz/save": {
+            "post": {
+                "description": "Adding new quiz to the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Quiz"
+                ],
+                "summary": "save quiz",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "createQuizInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/quiz.CreateQuizInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/quiz.Quiz"
+                        }
+                    }
+                }
+            }
+        },
         "/quizCategory": {
             "get": {
                 "description": "Get all quiz category",
@@ -433,6 +475,44 @@
         }
     },
     "definitions": {
+        "answer.Answer": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "answer_duration": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "generated_suggestion": {
+                    "type": "string"
+                },
+                "grade": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "question_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "controllers.TokenObject": {
             "type": "object",
             "properties": {
@@ -448,6 +528,128 @@
             "type": "object",
             "properties": {
                 "otp_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "question.Question": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/answer.Answer"
+                    }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "grade_percentage": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "point": {
+                    "type": "number"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "questionImage": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/questionImage.QuestionImage"
+                    }
+                },
+                "quiz_id": {
+                    "type": "string"
+                },
+                "reference_answer": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "questionImage.QuestionImage": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_path": {
+                    "type": "string"
+                },
+                "question_id": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "quiz.CreateQuizInput": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "quiz_category_id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "quiz.Quiz": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "duration": {
+                    "type": "integer"
+                },
+                "end_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "question": {
+                    "$ref": "#/definitions/question.Question"
+                },
+                "quizCategory": {
+                    "$ref": "#/definitions/quizCategory.QuizCategory"
+                },
+                "quiz_category_id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
