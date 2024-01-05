@@ -3,9 +3,13 @@ package main
 import (
 	"log"
 
-	"ajher-server/api/routes"
+	"ajher-server/api/controllers"
+	"ajher-server/api/middleware"
 	"ajher-server/database"
 	"ajher-server/docs"
+	"ajher-server/internal/otp"
+	"ajher-server/internal/quizCategory"
+	"ajher-server/internal/user"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -38,9 +42,41 @@ func main() {
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := router.Group("/api/v1")
+	userRoute := api.Group("user")
+	quizCategoryRoute := api.Group("quizCategory")
 
-	// routes
-	routes.UserRoute(api, db)
+	// repositories
+	userRepository := user.NewRepository(db)
+	otpRepository := otp.NewRepository(db)
+	quizCategoryRepository := quizCategory.NewRepository(db)
+
+	// services
+	userService := user.NewService(userRepository, otpRepository)
+	otpService := otp.NewService(otpRepository)
+	quizCategoryService := quizCategory.NewService(quizCategoryRepository)
+
+	// controllers
+	userHandler := controllers.NewUserHandler(userService, otpService)
+	quizCategoryHandler := controllers.NewQuizCategoryHandler(quizCategoryService)
+
+	// auth middleware
+	authMiddleware := middleware.NewAuthMiddleware(userService)
+
+	// user routes
+	userRoute.POST("/register", userHandler.Register)
+	userRoute.POST("/login", userHandler.Login)
+	userRoute.GET("/profile", authMiddleware.AuthMiddleware, userHandler.GetProfile)
+	userRoute.GET("/validateToken", authMiddleware.AuthMiddleware, userHandler.ValidateToken)
+	userRoute.POST("/refreshToken", authMiddleware.RefreshTokenMiddleware, userHandler.RefreshToken)
+	userRoute.POST("/googleAuth", userHandler.GoogleAuth)
+	userRoute.POST("/resetPassword", userHandler.ResetPassword)
+	userRoute.POST("/verifyOtp", userHandler.VerifyOtp)
+	userRoute.POST("/changePassword", userHandler.ChangePassword)
+
+	// quizCategoryRoutes
+	quizCategoryRoute.GET("/", authMiddleware.AuthMiddleware, quizCategoryHandler.GetAll)
+	quizCategoryRoute.GET("/:id", authMiddleware.AuthMiddleware, quizCategoryHandler.GetById)
+	quizCategoryRoute.POST("/save", authMiddleware.AuthMiddleware, quizCategoryHandler.Save)
 
 	router.Run(":5000")
 

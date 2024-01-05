@@ -11,6 +11,28 @@ definitions:
       otp_code:
         type: string
     type: object
+  quizCategory.QuizCategory:
+    properties:
+      category_name:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  quizCategory.QuizCategoryInput:
+    properties:
+      category_name:
+        type: string
+      description:
+        type: string
+    type: object
   user.ChangePasswordUserInput:
     properties:
       change_password:
@@ -91,6 +113,83 @@ definitions:
 info:
   contact: {}
 paths:
+  /quizCategory:
+    get:
+      consumes:
+      - application/json
+      description: Get all quiz category
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/quizCategory.QuizCategory'
+      summary: get all quiz category
+      tags:
+      - Quiz Category
+  /quizCategory/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get quiz category by id
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz Category Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/quizCategory.QuizCategory'
+      summary: get quiz category by id
+      tags:
+      - Quiz Category
+  /quizCategory/save:
+    post:
+      consumes:
+      - application/json
+      description: Adding new quiz category to the database
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: quizCategoryInput
+        required: true
+        schema:
+          $ref: '#/definitions/quizCategory.QuizCategoryInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/quizCategory.QuizCategory'
+      summary: save quiz category
+      tags:
+      - Quiz Category
   /user/changePassword:
     post:
       consumes:

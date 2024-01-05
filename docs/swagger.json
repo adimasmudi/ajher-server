@@ -4,6 +4,121 @@
         "contact": {}
     },
     "paths": {
+        "/quizCategory": {
+            "get": {
+                "description": "Get all quiz category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Quiz Category"
+                ],
+                "summary": "get all quiz category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/quizCategory.QuizCategory"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizCategory/save": {
+            "post": {
+                "description": "Adding new quiz category to the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Quiz Category"
+                ],
+                "summary": "save quiz category",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "quizCategoryInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/quizCategory.QuizCategoryInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/quizCategory.QuizCategory"
+                        }
+                    }
+                }
+            }
+        },
+        "/quizCategory/{id}": {
+            "get": {
+                "description": "Get quiz category by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Quiz Category"
+                ],
+                "summary": "get quiz category by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quiz Category Id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/quizCategory.QuizCategory"
+                        }
+                    }
+                }
+            }
+        },
         "/user/changePassword": {
             "post": {
                 "description": "Change Password user",
@@ -333,6 +448,40 @@
             "type": "object",
             "properties": {
                 "otp_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "quizCategory.QuizCategory": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "quizCategory.QuizCategoryInput": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 }
             }
