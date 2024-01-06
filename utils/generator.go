@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"io"
 	mathRand "math/rand"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -50,4 +52,44 @@ func EncodeToString(max int) string {
 		b[i] = table[int(b[i])%len(table)]
 	}
 	return string(b)
+}
+
+func CalculatePoint(sentence string) int {
+	// Tokenize the sentence into words
+	words := regexp.MustCompile(`\b\w+\b`).FindAllString(strings.ToLower(sentence), -1)
+
+	// Calculate length
+	length := len(words)
+
+	// Calculate uniqueness
+	uniqueWords := make(map[string]struct{})
+	for _, word := range words {
+		uniqueWords[word] = struct{}{}
+	}
+	uniqueness := float64(len(uniqueWords)) / float64(length)
+
+	// Assign points based on length and uniqueness
+	var lengthPoints, uniquenessPoints int
+	switch {
+	case length < 5:
+		lengthPoints = 1
+	case length < 10:
+		lengthPoints = 2
+	default:
+		lengthPoints = 3
+	}
+
+	switch {
+	case uniqueness < 0.5:
+		uniquenessPoints = 1
+	case uniqueness < 0.8:
+		uniquenessPoints = 2
+	default:
+		uniquenessPoints = 3
+	}
+
+	// Total points
+	totalPoints := lengthPoints + uniquenessPoints
+
+	return totalPoints
 }

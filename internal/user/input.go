@@ -21,11 +21,11 @@ type GoogleOAuthInput struct {
 }
 
 type ResetPasswordInput struct {
-	Email string `json:"email"`
+	Email string `json:"email" binding:"required"`
 }
 
 type ChangePasswordUserInput struct {
-	OtpCode         string `json:"otp_code"`
-	Password        string `json:"password"`
-	ConfirmPassword string `json:"change_password"`
+	OtpCode         string `json:"otp_code" binding:"required"`
+	Password        string `json:"password" binding:"required"`
+	ConfirmPassword string `json:"change_password" binding:"required"`
 }

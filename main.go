@@ -9,6 +9,7 @@ import (
 	"ajher-server/docs"
 	"ajher-server/internal/otp"
 	"ajher-server/internal/participation"
+	"ajher-server/internal/question"
 	"ajher-server/internal/quiz"
 	"ajher-server/internal/quizCategory"
 	"ajher-server/internal/user"
@@ -47,6 +48,7 @@ func main() {
 	userRoute := api.Group("user")
 	quizCategoryRoute := api.Group("quizCategory")
 	quizRoute := api.Group("quiz")
+	questionRoute := api.Group("question")
 
 	// repositories
 	userRepository := user.NewRepository(db)
@@ -54,17 +56,20 @@ func main() {
 	quizCategoryRepository := quizCategory.NewRepository(db)
 	quizRepository := quiz.NewRepository(db)
 	participationRepository := participation.NewRepository(db)
+	questionRepository := question.NewRepository(db)
 
 	// services
 	userService := user.NewService(userRepository, otpRepository)
 	otpService := otp.NewService(otpRepository)
 	quizCategoryService := quizCategory.NewService(quizCategoryRepository)
 	quizService := quiz.NewService(quizRepository, participationRepository)
+	questionService := question.NewService(questionRepository)
 
 	// controllers
 	userHandler := controllers.NewUserHandler(userService, otpService)
 	quizCategoryHandler := controllers.NewQuizCategoryHandler(quizCategoryService)
 	quizHandler := controllers.NewQuizHandler(quizService)
+	questionHandler := controllers.NewQuestionHandler(questionService)
 
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
@@ -87,6 +92,9 @@ func main() {
 
 	// quiz
 	quizRoute.POST("/save", authMiddleware.AuthMiddleware, quizHandler.Save)
+
+	// question
+	questionRoute.POST("/save", authMiddleware.AuthMiddleware, questionHandler.Save)
 
 	router.Run(":5000")
 

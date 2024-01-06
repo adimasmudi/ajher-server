@@ -1,6 +1,6 @@
 package quizCategory
 
 type QuizCategoryInput struct {
-	CategoryName string `json:"category_name"`
-	Description  string `json:"description"`
+	CategoryName string `json:"category_name" binding:"required"`
+	Description  string `json:"description" binding:"required"`
 }

@@ -15,6 +15,48 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/question/save": {
+            "post": {
+                "description": "Adding new questions to the database. Add field duration input as string for example \"50 sec\" or \"1 min\", it will converted into second in server and return to client as second also. The client should format it.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Question"
+                ],
+                "summary": "save questions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "addQuestionInputs",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/question.AddQuestionInputs"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/question.Question"
+                        }
+                    }
+                }
+            }
+        },
         "/quiz/save": {
             "post": {
                 "description": "Adding new quiz to the database",
@@ -537,8 +579,51 @@ const docTemplate = `{
         },
         "otp.VerifyOtpInput": {
             "type": "object",
+            "required": [
+                "otp_code"
+            ],
             "properties": {
                 "otp_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "question.AddQuestionInput": {
+            "type": "object",
+            "required": [
+                "duration",
+                "grade_percentage",
+                "question"
+            ],
+            "properties": {
+                "duration": {
+                    "type": "string"
+                },
+                "grade_percentage": {
+                    "type": "number"
+                },
+                "question": {
+                    "type": "string"
+                },
+                "reference_answer": {
+                    "type": "string"
+                }
+            }
+        },
+        "question.AddQuestionInputs": {
+            "type": "object",
+            "required": [
+                "questions",
+                "quiz_id"
+            ],
+            "properties": {
+                "questions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/question.AddQuestionInput"
+                    }
+                },
+                "quiz_id": {
                     "type": "string"
                 }
             }
@@ -612,6 +697,11 @@ const docTemplate = `{
         },
         "quiz.CreateQuizInput": {
             "type": "object",
+            "required": [
+                "description",
+                "quiz_category_id",
+                "title"
+            ],
             "properties": {
                 "description": {
                     "type": "string"
@@ -646,7 +736,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "question": {
-                    "$ref": "#/definitions/question.Question"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/question.Question"
+                    }
                 },
                 "quizCategory": {
                     "$ref": "#/definitions/quizCategory.QuizCategory"
@@ -690,6 +783,10 @@ const docTemplate = `{
         },
         "quizCategory.QuizCategoryInput": {
             "type": "object",
+            "required": [
+                "category_name",
+                "description"
+            ],
             "properties": {
                 "category_name": {
                     "type": "string"
@@ -701,6 +798,11 @@ const docTemplate = `{
         },
         "user.ChangePasswordUserInput": {
             "type": "object",
+            "required": [
+                "change_password",
+                "otp_code",
+                "password"
+            ],
             "properties": {
                 "change_password": {
                     "type": "string"
@@ -775,6 +877,9 @@ const docTemplate = `{
         },
         "user.ResetPasswordInput": {
             "type": "object",
+            "required": [
+                "email"
+            ],
             "properties": {
                 "email": {
                     "type": "string"

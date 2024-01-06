@@ -35,6 +35,35 @@ definitions:
     properties:
       otp_code:
         type: string
+    required:
+    - otp_code
+    type: object
+  question.AddQuestionInput:
+    properties:
+      duration:
+        type: string
+      grade_percentage:
+        type: number
+      question:
+        type: string
+      reference_answer:
+        type: string
+    required:
+    - duration
+    - grade_percentage
+    - question
+    type: object
+  question.AddQuestionInputs:
+    properties:
+      questions:
+        items:
+          $ref: '#/definitions/question.AddQuestionInput'
+        type: array
+      quiz_id:
+        type: string
+    required:
+    - questions
+    - quiz_id
     type: object
   question.Question:
     properties:
@@ -88,6 +117,10 @@ definitions:
         type: integer
       title:
         type: string
+    required:
+    - description
+    - quiz_category_id
+    - title
     type: object
   quiz.Quiz:
     properties:
@@ -104,7 +137,9 @@ definitions:
       id:
         type: string
       question:
-        $ref: '#/definitions/question.Question'
+        items:
+          $ref: '#/definitions/question.Question'
+        type: array
       quiz_category_id:
         type: integer
       quizCategory:
@@ -137,6 +172,9 @@ definitions:
         type: string
       description:
         type: string
+    required:
+    - category_name
+    - description
     type: object
   user.ChangePasswordUserInput:
     properties:
@@ -146,6 +184,10 @@ definitions:
         type: string
       password:
         type: string
+    required:
+    - change_password
+    - otp_code
+    - password
     type: object
   user.GoogleOAuthInput:
     properties:
@@ -191,6 +233,8 @@ definitions:
     properties:
       email:
         type: string
+    required:
+    - email
     type: object
   user.User:
     properties:
@@ -218,6 +262,36 @@ definitions:
 info:
   contact: {}
 paths:
+  /question/save:
+    post:
+      consumes:
+      - application/json
+      description: Adding new questions to the database. Add field duration input
+        as string for example "50 sec" or "1 min", it will converted into second in
+        server and return to client as second also. The client should format it.
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: addQuestionInputs
+        required: true
+        schema:
+          $ref: '#/definitions/question.AddQuestionInputs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/question.Question'
+      summary: save questions
+      tags:
+      - Question
   /quiz/save:
     post:
       consumes:
