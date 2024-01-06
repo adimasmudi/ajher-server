@@ -92,6 +92,7 @@ func main() {
 
 	// quiz
 	quizRoute.POST("/save", authMiddleware.AuthMiddleware, quizHandler.Save)
+	quizRoute.POST("/:id", authMiddleware.AuthMiddleware, quizHandler.GetDetailQuiz)
 
 	// question
 	questionRoute.POST("/save", authMiddleware.AuthMiddleware, questionHandler.Save)

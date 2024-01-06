@@ -1,6 +1,7 @@
 package participation
 
 import (
+	"ajher-server/internal/user"
 	"time"
 )
 
@@ -11,4 +12,5 @@ type Participation struct {
 	Status    string    `json:"status"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	User      user.User
 }

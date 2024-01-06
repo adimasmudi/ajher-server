@@ -27,7 +27,7 @@ func (r *repository) Save(quiz Quiz) (Quiz, error) {
 
 func (r *repository) GetById(id string) (Quiz, error) {
 	var quiz Quiz
-	err := r.db.Where("id=?", id).Find(&quiz).Error
+	err := r.db.Preload("Question").Preload("QuizCategory").Where("id=?", id).Find(&quiz).Error
 
 	if err != nil {
 		return quiz, err

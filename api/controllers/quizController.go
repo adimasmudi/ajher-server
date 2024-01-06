@@ -57,3 +57,31 @@ func (h *quizHandler) Save(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 
 }
+
+// Get Quiz Detail  godoc
+//
+// @Summary  get quiz detil
+// @Description Get quiz from the database
+// @Tags   Quiz
+// @Accept   json
+// @Produce  json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add refresh token here>)
+// @Param id path string true "Quiz Id"
+// @Success  200   {object} quiz.Quiz
+// @Router   /quiz/{id} [post]
+func (h *quizHandler) GetDetailQuiz(ctx *gin.Context) {
+	quizId := ctx.Param("id")
+
+	quizDetail, participation, err := h.quizService.GetQuizDetail(quizId)
+
+	if err != nil {
+		response := utils.APIResponse("Get Quiz Detail Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := quiz.FormatQuiz(quizDetail, participation)
+	response := utils.APIResponse("Get Quiz Detail Success", http.StatusOK, "success", formatter)
+	ctx.JSON(http.StatusOK, response)
+
+}

@@ -26,5 +26,4 @@ func ConvertStringDurationIntoInteger(durationString string) (int, error) {
 	}
 
 	return duration, nil
-
 }

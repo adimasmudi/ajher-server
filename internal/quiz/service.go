@@ -7,7 +7,7 @@ import (
 
 type Service interface {
 	Save(input CreateQuizInput, userId int) (Quiz, error)
-	// GetById(id string) (Quiz, error)
+	GetQuizDetail(id string) (Quiz, participation.Participation, error)
 }
 
 type service struct {
@@ -60,6 +60,19 @@ func (s *service) Save(input CreateQuizInput, userId int) (Quiz, error) {
 
 }
 
-// func (s *service) GetById(id string) (Quiz, error){
+func (s *service) GetQuizDetail(id string) (Quiz, participation.Participation, error) {
+	var participation participation.Participation
+	quiz, err := s.repository.GetById(id)
 
-// }
+	if err != nil {
+		return quiz, participation, err
+	}
+
+	participation, err = s.participationRepository.GetByQuizId(quiz.ID)
+
+	if err != nil {
+		return quiz, participation, err
+	}
+
+	return quiz, participation, nil
+}

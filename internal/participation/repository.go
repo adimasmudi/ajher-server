@@ -4,6 +4,7 @@ import "gorm.io/gorm"
 
 type Repository interface {
 	Save(partcipation Participation) (Participation, error)
+	GetByQuizId(quizId string) (Participation, error)
 }
 
 type repository struct {
@@ -16,6 +17,17 @@ func NewRepository(db *gorm.DB) *repository {
 
 func (r *repository) Save(participation Participation) (Participation, error) {
 	err := r.db.Create(&participation).Error
+
+	if err != nil {
+		return participation, err
+	}
+
+	return participation, nil
+}
+
+func (r *repository) GetByQuizId(quizId string) (Participation, error) {
+	var participation Participation
+	err := r.db.Preload("User").Where("quiz_id=?", quizId).Find(&participation).Error
 
 	if err != nil {
 		return participation, err
