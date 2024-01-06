@@ -57,6 +57,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/quiz/join/{quizCode}": {
+            "post": {
+                "description": "Joining certain quiz",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Quiz"
+                ],
+                "summary": "join quiz",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quiz Code",
+                        "name": "quizCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/quiz.Quiz"
+                        }
+                    }
+                }
+            }
+        },
         "/quiz/save": {
             "post": {
                 "description": "Adding new quiz to the database",
@@ -100,7 +140,7 @@ const docTemplate = `{
             }
         },
         "/quiz/{id}": {
-            "post": {
+            "get": {
                 "description": "Get quiz from the database",
                 "consumes": [
                     "application/json"
@@ -111,7 +151,7 @@ const docTemplate = `{
                 "tags": [
                     "Quiz"
                 ],
-                "summary": "get quiz detil",
+                "summary": "get quiz detail",
                 "parameters": [
                     {
                         "type": "string",

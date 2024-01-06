@@ -8,6 +8,7 @@ import (
 	"ajher-server/database"
 	"ajher-server/docs"
 	"ajher-server/internal/otp"
+	"ajher-server/internal/participantQuestion"
 	"ajher-server/internal/participation"
 	"ajher-server/internal/question"
 	"ajher-server/internal/quiz"
@@ -57,12 +58,13 @@ func main() {
 	quizRepository := quiz.NewRepository(db)
 	participationRepository := participation.NewRepository(db)
 	questionRepository := question.NewRepository(db)
+	participationQuestionRepository := participantQuestion.NewRepository(db)
 
 	// services
 	userService := user.NewService(userRepository, otpRepository)
 	otpService := otp.NewService(otpRepository)
 	quizCategoryService := quizCategory.NewService(quizCategoryRepository)
-	quizService := quiz.NewService(quizRepository, participationRepository)
+	quizService := quiz.NewService(quizRepository, participationRepository, questionRepository, participationQuestionRepository)
 	questionService := question.NewService(questionRepository)
 
 	// controllers
@@ -92,7 +94,8 @@ func main() {
 
 	// quiz
 	quizRoute.POST("/save", authMiddleware.AuthMiddleware, quizHandler.Save)
-	quizRoute.POST("/:id", authMiddleware.AuthMiddleware, quizHandler.GetDetailQuiz)
+	quizRoute.GET("/:id", authMiddleware.AuthMiddleware, quizHandler.GetDetailQuiz)
+	quizRoute.POST("/join/:quizCode", authMiddleware.AuthMiddleware, quizHandler.JoinQuiz)
 
 	// question
 	questionRoute.POST("/save", authMiddleware.AuthMiddleware, questionHandler.Save)

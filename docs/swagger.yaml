@@ -293,7 +293,7 @@ paths:
       tags:
       - Question
   /quiz/{id}:
-    post:
+    get:
       consumes:
       - application/json
       description: Get quiz from the database
@@ -316,7 +316,34 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/quiz.Quiz'
-      summary: get quiz detil
+      summary: get quiz detail
+      tags:
+      - Quiz
+  /quiz/join/{quizCode}:
+    post:
+      consumes:
+      - application/json
+      description: Joining certain quiz
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz Code
+        in: path
+        name: quizCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/quiz.Quiz'
+      summary: join quiz
       tags:
       - Quiz
   /quiz/save:
