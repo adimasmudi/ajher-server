@@ -1,6 +1,7 @@
 package participantQuestion
 
 import (
+	"ajher-server/internal/question"
 	"time"
 )
 
@@ -11,4 +12,5 @@ type ParticipantQuestion struct {
 	Number          int       `json:"number"`
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
+	Question        question.Question
 }

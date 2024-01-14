@@ -4,6 +4,7 @@ import "gorm.io/gorm"
 
 type Repository interface {
 	Save(question []ParticipantQuestion) ([]ParticipantQuestion, error)
+	GetByParticipantId(participantId string) ([]ParticipantQuestion, error)
 }
 
 type repository struct {
@@ -22,4 +23,15 @@ func (r *repository) Save(question []ParticipantQuestion) ([]ParticipantQuestion
 	}
 
 	return question, nil
+}
+
+func (r *repository) GetByParticipantId(participantId string) ([]ParticipantQuestion, error) {
+	var participantQuestion []ParticipantQuestion
+	err := r.db.Preload("Question").Where("participation_id=?", participantId).Find(&participantQuestion).Error
+
+	if err != nil {
+		return participantQuestion, err
+	}
+
+	return participantQuestion, nil
 }

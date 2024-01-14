@@ -66,12 +66,13 @@ func main() {
 	quizCategoryService := quizCategory.NewService(quizCategoryRepository)
 	quizService := quiz.NewService(quizRepository, participationRepository, questionRepository, participationQuestionRepository)
 	questionService := question.NewService(questionRepository)
+	participantQuestionService := participantQuestion.NewService(participationQuestionRepository, userRepository, participationRepository)
 
 	// controllers
 	userHandler := controllers.NewUserHandler(userService, otpService)
 	quizCategoryHandler := controllers.NewQuizCategoryHandler(quizCategoryService)
 	quizHandler := controllers.NewQuizHandler(quizService)
-	questionHandler := controllers.NewQuestionHandler(questionService)
+	questionHandler := controllers.NewQuestionHandler(questionService, participantQuestionService)
 
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
@@ -99,6 +100,7 @@ func main() {
 
 	// question
 	questionRoute.POST("/save", authMiddleware.AuthMiddleware, questionHandler.Save)
+	questionRoute.GET("/:quizId", authMiddleware.AuthMiddleware, questionHandler.GetQuestionByNumber)
 
 	router.Run(":5000")
 

@@ -38,6 +38,23 @@ definitions:
     required:
     - otp_code
     type: object
+  participantQuestion.ParticipantQuestion:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      number:
+        type: integer
+      participation_id:
+        type: string
+      question:
+        $ref: '#/definitions/question.Question'
+      question_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
   question.AddQuestionInput:
     properties:
       duration:
@@ -262,6 +279,33 @@ definitions:
 info:
   contact: {}
 paths:
+  /question/{quizId}:
+    get:
+      consumes:
+      - application/json
+      description: Get question by each number from the database
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz Id
+        in: path
+        name: quizId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/participantQuestion.ParticipantQuestion'
+      summary: get question each number
+      tags:
+      - Question
   /question/save:
     post:
       consumes:

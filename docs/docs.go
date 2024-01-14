@@ -57,6 +57,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/question/{quizId}": {
+            "get": {
+                "description": "Get question by each number from the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Question"
+                ],
+                "summary": "get question each number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quiz Id",
+                        "name": "quizId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/participantQuestion.ParticipantQuestion"
+                        }
+                    }
+                }
+            }
+        },
         "/quiz/join/{quizCode}": {
             "post": {
                 "description": "Joining certain quiz",
@@ -664,6 +704,32 @@ const docTemplate = `{
             ],
             "properties": {
                 "otp_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "participantQuestion.ParticipantQuestion": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "participation_id": {
+                    "type": "string"
+                },
+                "question": {
+                    "$ref": "#/definitions/question.Question"
+                },
+                "question_id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

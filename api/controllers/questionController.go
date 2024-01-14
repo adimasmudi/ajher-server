@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"ajher-server/internal/participantQuestion"
 	"ajher-server/internal/question"
+	"ajher-server/internal/user"
 	"ajher-server/utils"
 	"net/http"
 
@@ -9,11 +11,12 @@ import (
 )
 
 type questionHandler struct {
-	questionService question.Service
+	questionService            question.Service
+	participantQuestionService participantQuestion.Service
 }
 
-func NewQuestionHandler(questionService question.Service) *questionHandler {
-	return &questionHandler{questionService}
+func NewQuestionHandler(questionService question.Service, participantQuestionService participantQuestion.Service) *questionHandler {
+	return &questionHandler{questionService, participantQuestionService}
 }
 
 // Save Questions  godoc
@@ -49,6 +52,37 @@ func (h *questionHandler) Save(ctx *gin.Context) {
 	}
 
 	response := utils.APIResponse("Save Questions Success", http.StatusOK, "success", newQuestions)
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+// Get Question  godoc
+//
+// @Summary  get question each number
+// @Description Get question by each number from the database
+// @Tags   Question
+// @Accept   json
+// @Produce  json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add refresh token here>)
+// @Param quizId path string true "Quiz Id"
+// @Success  200   {object} participantQuestion.ParticipantQuestion
+// @Router   /question/{quizId} [get]
+func (h *questionHandler) GetQuestionByNumber(ctx *gin.Context) {
+	quizId := ctx.Param("quizId")
+
+	currentUser := ctx.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	participationQuestion, err := h.participantQuestionService.GetQuestionByEachNumber(userID, quizId)
+
+	if err != nil {
+		response := utils.APIResponse("Get Question Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := participantQuestion.FormatQuestion(participationQuestion)
+	response := utils.APIResponse("Get Question Success", http.StatusOK, "success", formatter)
 
 	ctx.JSON(http.StatusOK, response)
 }
