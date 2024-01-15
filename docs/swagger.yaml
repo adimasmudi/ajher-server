@@ -24,6 +24,15 @@ definitions:
       user_id:
         type: integer
     type: object
+  answer.AnswerQuestionInput:
+    properties:
+      answer:
+        type: string
+      answer_duration:
+        type: integer
+      question_id:
+        type: string
+    type: object
   controllers.TokenObject:
     properties:
       accessToken:
@@ -279,6 +288,34 @@ definitions:
 info:
   contact: {}
 paths:
+  /answer/save:
+    post:
+      consumes:
+      - application/json
+      description: Adding new answer to the database.
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Answer Data
+        in: body
+        name: AnswerQuestionInput
+        required: true
+        schema:
+          $ref: '#/definitions/answer.AnswerQuestionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/answer.Answer'
+      summary: save answer
+      tags:
+      - Answer
   /question/{quizId}:
     get:
       consumes:

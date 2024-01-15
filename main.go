@@ -7,6 +7,7 @@ import (
 	"ajher-server/api/middleware"
 	"ajher-server/database"
 	"ajher-server/docs"
+	"ajher-server/internal/answer"
 	"ajher-server/internal/otp"
 	"ajher-server/internal/participantQuestion"
 	"ajher-server/internal/participation"
@@ -50,6 +51,7 @@ func main() {
 	quizCategoryRoute := api.Group("quizCategory")
 	quizRoute := api.Group("quiz")
 	questionRoute := api.Group("question")
+	answerRoute := api.Group("answer")
 
 	// repositories
 	userRepository := user.NewRepository(db)
@@ -59,6 +61,7 @@ func main() {
 	participationRepository := participation.NewRepository(db)
 	questionRepository := question.NewRepository(db)
 	participationQuestionRepository := participantQuestion.NewRepository(db)
+	answerRepository := answer.NewRepository(db)
 
 	// services
 	userService := user.NewService(userRepository, otpRepository)
@@ -67,12 +70,14 @@ func main() {
 	quizService := quiz.NewService(quizRepository, participationRepository, questionRepository, participationQuestionRepository)
 	questionService := question.NewService(questionRepository)
 	participantQuestionService := participantQuestion.NewService(participationQuestionRepository, userRepository, participationRepository)
+	answerService := answer.NewService(answerRepository)
 
 	// controllers
 	userHandler := controllers.NewUserHandler(userService, otpService)
 	quizCategoryHandler := controllers.NewQuizCategoryHandler(quizCategoryService)
 	quizHandler := controllers.NewQuizHandler(quizService)
 	questionHandler := controllers.NewQuestionHandler(questionService, participantQuestionService)
+	answerHandler := controllers.NewAnswerHandler(answerService)
 
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
@@ -101,6 +106,9 @@ func main() {
 	// question
 	questionRoute.POST("/save", authMiddleware.AuthMiddleware, questionHandler.Save)
 	questionRoute.GET("/:quizId", authMiddleware.AuthMiddleware, questionHandler.GetQuestionByNumber)
+
+	// answer
+	answerRoute.POST("/save", authMiddleware.AuthMiddleware, answerHandler.Save)
 
 	router.Run(":5000")
 

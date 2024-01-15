@@ -15,6 +15,48 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/answer/save": {
+            "post": {
+                "description": "Adding new answer to the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Answer"
+                ],
+                "summary": "save answer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Answer Data",
+                        "name": "AnswerQuestionInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/answer.AnswerQuestionInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/answer.Answer"
+                        }
+                    }
+                }
+            }
+        },
         "/question/save": {
             "post": {
                 "description": "Adding new questions to the database. Add field duration input as string for example \"50 sec\" or \"1 min\", it will converted into second in server and return to client as second also. The client should format it.",
@@ -683,6 +725,20 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "answer.AnswerQuestionInput": {
+            "type": "object",
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "answer_duration": {
+                    "type": "integer"
+                },
+                "question_id": {
+                    "type": "string"
                 }
             }
         },
