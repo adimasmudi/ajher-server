@@ -56,3 +56,33 @@ func (h *answerHandler) Save(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+// Finish Answer Quiz  godoc
+//
+// @Summary  finish answer quiz
+// @Description Finish answering question in quiz.
+// @Tags   Answer
+// @Accept   json
+// @Produce  json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add refresh token here>)
+// @Param quizId path string true "Quiz Id"
+// @Success  200   {object} answer.Answer
+// @Router   /answer/finish/{quizId} [post]
+func (h *answerHandler) FinishAnswer(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	quizId := ctx.Param("quizId")
+
+	finishedQuiz, err := h.answerService.FinishAnswer(quizId, userID)
+
+	if err != nil {
+		response := utils.APIResponse("Finish Quiz Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := utils.APIResponse("Finish Quiz Success", http.StatusOK, "success", finishedQuiz)
+
+	ctx.JSON(http.StatusOK, response)
+}

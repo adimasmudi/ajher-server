@@ -1,6 +1,7 @@
 package answer
 
 import (
+	"ajher-server/internal/question"
 	"time"
 )
 
@@ -16,4 +17,5 @@ type Answer struct {
 	GeneratedSuggestion string    `json:"generated_suggestion"`
 	CreatedAt           time.Time `json:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at"`
+	Question            question.Question
 }

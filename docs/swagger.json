@@ -4,6 +4,46 @@
         "contact": {}
     },
     "paths": {
+        "/answer/finish/{quizId}": {
+            "post": {
+                "description": "Finish answering question in quiz.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Answer"
+                ],
+                "summary": "finish answer quiz",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd refresh token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quiz Id",
+                        "name": "quizId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/answer.Answer"
+                        }
+                    }
+                }
+            }
+        },
         "/answer/save": {
             "post": {
                 "description": "Adding new answer to the database.",

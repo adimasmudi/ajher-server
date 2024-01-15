@@ -288,6 +288,33 @@ definitions:
 info:
   contact: {}
 paths:
+  /answer/finish/{quizId}:
+    post:
+      consumes:
+      - application/json
+      description: Finish answering question in quiz.
+      parameters:
+      - default: Bearer <Add refresh token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz Id
+        in: path
+        name: quizId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/answer.Answer'
+      summary: finish answer quiz
+      tags:
+      - Answer
   /answer/save:
     post:
       consumes:

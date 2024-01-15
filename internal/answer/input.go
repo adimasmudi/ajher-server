@@ -5,3 +5,10 @@ type AnswerQuestionInput struct {
 	Answer         string `json:"answer"`
 	AnswerDuration int    `json:"answer_duration"`
 }
+
+type AnswerToCorrect struct {
+	QuestionId      string `json:"question_id"`
+	AnswerId        string `json:"answer_id"`
+	Answer          string `json:"answer"`
+	ReferenceAnswer string `json:"reference_answer"`
+}

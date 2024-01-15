@@ -1,7 +1,6 @@
 package question
 
 import (
-	"ajher-server/internal/answer"
 	"ajher-server/internal/questionImage"
 	"time"
 )
@@ -18,5 +17,4 @@ type Question struct {
 	CreatedAt       time.Time `json:"created_at"`
 	UpdatedAt       time.Time `json:"updated_at"`
 	QuestionImage   []questionImage.QuestionImage
-	Answer          []answer.Answer
 }
