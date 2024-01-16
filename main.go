@@ -110,6 +110,7 @@ func main() {
 	// answer
 	answerRoute.POST("/save", authMiddleware.AuthMiddleware, answerHandler.Save)
 	answerRoute.POST("/finish/:quizId", authMiddleware.AuthMiddleware, answerHandler.FinishAnswer)
+	answerRoute.GET("/getFinished/:quizId", authMiddleware.AuthMiddleware, answerHandler.GetFinished)
 
 	router.Run(":5000")
 

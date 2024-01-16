@@ -12,6 +12,7 @@ import (
 type Service interface {
 	Save(input AnswerQuestionInput, userId int) (Answer, error)
 	FinishAnswer(quizId string, userId int) ([]Answer, error)
+	GetFinishedAnswer(quizId string, userID int) ([]Answer, error)
 }
 
 type service struct {
@@ -158,4 +159,14 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	}
 
 	return updatedAnswer, nil
+}
+
+func (s *service) GetFinishedAnswer(quizId string, userID int) ([]Answer, error) {
+	userAnswers, err := s.repository.GetUserAnswers(quizId, userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userAnswers, nil
 }

@@ -55,6 +55,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/answer/getFinished/{quizId}": {
+            "get": {
+                "description": "Get finished answer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Answer"
+                ],
+                "summary": "get finished answer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Quiz Id",
+                        "name": "quizId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/answer.Answer"
+                        }
+                    }
+                }
+            }
+        },
         "/answer/save": {
             "post": {
                 "description": "Adding new answer to the database.",
@@ -754,6 +794,9 @@ const docTemplate = `{
                 "label": {
                     "type": "string"
                 },
+                "question": {
+                    "$ref": "#/definitions/question.Question"
+                },
                 "question_id": {
                     "type": "string"
                 },
@@ -873,12 +916,6 @@ const docTemplate = `{
         "question.Question": {
             "type": "object",
             "properties": {
-                "answer": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/answer.Answer"
-                    }
-                },
                 "created_at": {
                     "type": "string"
                 },

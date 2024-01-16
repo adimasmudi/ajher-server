@@ -86,3 +86,34 @@ func (h *answerHandler) FinishAnswer(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+// get finished answer godoc
+//
+// @Summary  get finished answer
+// @Description Get finished answer
+// @Tags  Answer
+// @Accept   json
+// @Produce  json
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Param quizId path string true "Quiz Id"
+// @Success  200   {object} answer.Answer
+// @Router   /answer/getFinished/{quizId} [get]
+func (h *answerHandler) GetFinished(ctx *gin.Context) {
+	currentUser := ctx.MustGet("currentUser").(user.User)
+	userID := currentUser.ID
+
+	quizId := ctx.Param("quizId")
+
+	finishedAnswer, err := h.answerService.GetFinishedAnswer(quizId, userID)
+
+	if err != nil {
+		response := utils.APIResponse("Get Finished Answer Quiz Failed", http.StatusBadRequest, "error", err.Error())
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	formatter := answer.FormatFinishAnswer(finishedAnswer)
+	response := utils.APIResponse("Get Finished Answer Quiz Success", http.StatusOK, "success", formatter)
+
+	ctx.JSON(http.StatusOK, response)
+}

@@ -15,6 +15,8 @@ definitions:
         type: string
       label:
         type: string
+      question:
+        $ref: '#/definitions/question.Question'
       question_id:
         type: string
       status:
@@ -93,10 +95,6 @@ definitions:
     type: object
   question.Question:
     properties:
-      answer:
-        items:
-          $ref: '#/definitions/answer.Answer'
-        type: array
       created_at:
         type: string
       duration:
@@ -313,6 +311,33 @@ paths:
           schema:
             $ref: '#/definitions/answer.Answer'
       summary: finish answer quiz
+      tags:
+      - Answer
+  /answer/getFinished/{quizId}:
+    get:
+      consumes:
+      - application/json
+      description: Get finished answer
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Quiz Id
+        in: path
+        name: quizId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/answer.Answer'
+      summary: get finished answer
       tags:
       - Answer
   /answer/save:
