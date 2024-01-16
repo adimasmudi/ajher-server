@@ -11,4 +11,5 @@ type AnswerToCorrect struct {
 	AnswerId        string `json:"answer_id"`
 	Answer          string `json:"answer"`
 	ReferenceAnswer string `json:"reference_answer"`
+	AnswerDuration  int    `json:"answer_duration"`
 }

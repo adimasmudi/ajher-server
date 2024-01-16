@@ -27,14 +27,21 @@ func (r *repository) Save(answer Answer) (Answer, error) {
 }
 
 func (r *repository) GetUserAnswers(quizId string, userId int) ([]Answer, error) {
-	var answer []Answer
-	err := r.db.Raw("SELECT * FROM participations,quizzes,questions,answers WHERE participations.user_id=? AND participations.quiz_id=? AND participations.quiz_id=quizzes.id AND questions.quiz_id=quizzes.id AND answers.question_id=questions.id AND answers.user_id=?", userId, quizId, userId).Find(&answer).Error
+	var answers []Answer
+	err := r.db.Raw(`
+		SELECT answers.*, questions.*
+		FROM participations
+		JOIN quizzes ON participations.quiz_id = quizzes.id
+		JOIN questions ON questions.quiz_id = quizzes.id
+		JOIN answers ON answers.question_id = questions.id
+		WHERE participations.user_id = ? AND participations.quiz_id = ? AND answers.user_id = ?
+	`, userId, quizId, userId).Preload("Question").Find(&answers).Error
 
 	if err != nil {
-		return answer, err
+		return answers, err
 	}
 
-	return answer, nil
+	return answers, nil
 }
 
 func (r *repository) Update(answers []Answer) ([]Answer, error) {

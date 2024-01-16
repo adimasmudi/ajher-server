@@ -63,8 +63,9 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	for _, data := range userAnswers {
 		answerToCorrect.AnswerId = data.ID
 		answerToCorrect.Answer = data.Answer
-		answerToCorrect.QuestionId = data.QuestionId
+		answerToCorrect.QuestionId = data.Question.ID
 		answerToCorrect.ReferenceAnswer = data.Question.ReferenceAnswer
+		answerToCorrect.AnswerDuration = data.AnswerDuration
 
 		answerToCorrects = append(answerToCorrects, answerToCorrect)
 	}
@@ -109,6 +110,7 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 		Answer          string  `json:"answer"`
 		ReferenceAnswer string  `json:"reference_answer"`
 		Grade           float64 `json:"grade"`
+		AnswerDuration  int     `json:"answer_duration"`
 	}
 
 	type responseObject struct {
@@ -133,6 +135,18 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 		answerPayload.ID = data.AnswerId
 		answerPayload.UserId = userId
 		answerPayload.Grade = data.Grade
+		answerPayload.Answer = data.Answer
+		answerPayload.AnswerDuration = data.AnswerDuration
+
+		var label string
+		if data.Grade <= 50 {
+			label = "wrong"
+		} else {
+			label = "right"
+		}
+
+		answerPayload.Label = label
+		answerPayload.Status = "evaluated"
 
 		answerPayloads = append(answerPayloads, answerPayload)
 	}
