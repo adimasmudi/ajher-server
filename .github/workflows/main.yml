@@ -1,0 +1,61 @@
+name: CI/CD for Flask Ajher Model
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_KEY_FILE }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t gcr.io/ajher-409804/ajher_server:${{ github.sha }} .
+          docker tag gcr.io/ajher-409804/ajher_server:${{ github.sha }} gcr.io/ajher-409804/ajher_server:latest
+          docker push gcr.io/ajher-409804/ajher_server:${{ github.sha }}
+          docker push gcr.io/ajher-409804/ajher_server:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_KEY_FILE }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: Deploy to Google Cloud Run
+        run: |
+          gcloud run deploy ajher-server \
+            --image=gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
+            --platform=managed \
+            --region=asia-southeast2 \
+            --memory=4Gi \
+            --allow-unauthenticated \
+            --set-env-vars \
+              JWT_SECRET_KEY=djhssadwjehhrwhdjdjshjsh,OAUTH_CLIENT_ID=369476682979-lce27gr4o0d0hlnthne78u1e11esveun.apps.googleusercontent.com,OAUTH_CLIENT_SECRET=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,REDIRECT_URL=http://localhost:5000,CONFIG_SMTP_HOST=smtp.gmail.com,CONFIG_SMTP_PORT=587,CONFIG_SENDER_NAME=Ajher Apps <ajherteam@gmail.com>,CONFIG_AUTH_EMAIL=ajherteam@gmail.com,CONFIG_AUTH_PASSWORD=bucy vysh ojap iihd,MODEL_SERVICE_URL=https://ajher-model-7ofnamsfaq-et.a.run.app/api/predict,FIRESTORE_PROJECT_ID=ajher-409804,FIREBASE_SERVICE_ACCOUNT_PATH=ajher-409804-firebase-adminsdk-3bzai-a7dd3dbecc.json
