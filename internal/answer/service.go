@@ -1,18 +1,18 @@
 package answer
 
 import (
-	"ajher-server/utils"
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
 )
 
 type Service interface {
-	Save(input AnswerQuestionInput, userId int) (Answer, error)
-	FinishAnswer(quizId string, userId int) ([]Answer, error)
-	GetFinishedAnswer(quizId string, userID int) ([]Answer, error)
+	Save(input AnswerQuestionInput, userId string) (Answer, error)
+	FinishAnswer(quizId string, userId string) ([]Answer, error)
+	GetFinishedAnswer(quizId string, userID string) ([]AnswerWithQuestion, error)
 }
 
 type service struct {
@@ -23,23 +23,18 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) Save(input AnswerQuestionInput, userId int) (Answer, error) {
+func (s *service) Save(input AnswerQuestionInput, userId string) (Answer, error) {
 	answer := Answer{}
 
-	uuid, err := utils.GeneratedUUID()
-
-	if err != nil {
-		return answer, err
-	}
-
-	answer.ID = uuid
-	answer.UserId = userId
-	answer.QuestionId = input.QuestionId
-	answer.Answer = input.Answer
+	answer.UserID = userId
+	answer.QuestionID = input.QuestionId
+	answer.AnswerText = input.Answer
 	answer.AnswerDuration = input.AnswerDuration
 	answer.Status = "process"
+	answer.CreatedAt = time.Now()
+	answer.UpdatedAt = time.Now()
 
-	savedAnswer, err := s.repository.Save(answer)
+	savedAnswer, err := s.repository.Save(answer, "answers")
 
 	if err != nil {
 		return answer, err
@@ -48,7 +43,8 @@ func (s *service) Save(input AnswerQuestionInput, userId int) (Answer, error) {
 	return savedAnswer, nil
 }
 
-func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
+func (s *service) FinishAnswer(quizId string, userId string) ([]Answer, error) {
+	var answerToReturn []Answer
 	type answerCorrectionRequest struct {
 		Answers []AnswerToCorrect `json:"answers"`
 	}
@@ -63,10 +59,10 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 
 	for _, data := range userAnswers {
 		answerToCorrect.AnswerId = data.ID
-		answerToCorrect.Answer = data.Answer
+		answerToCorrect.Answer = data.AnswerText
 		answerToCorrect.QuestionId = data.Question.ID
 		answerToCorrect.ReferenceAnswer = data.Question.ReferenceAnswer
-		answerToCorrect.AnswerDuration = data.AnswerDuration
+		answerToCorrect.AnswerDuration = data.Answer.AnswerDuration
 
 		answerToCorrects = append(answerToCorrects, answerToCorrect)
 	}
@@ -79,7 +75,7 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	formData, err := json.Marshal(answerRequest)
 
 	if err != nil {
-		return userAnswers, err
+		return answerToReturn, err
 	}
 
 	reader := bytes.NewReader(formData)
@@ -87,7 +83,7 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	req, err := http.NewRequest("POST", modelUrl, reader)
 
 	if err != nil {
-		return userAnswers, err
+		return answerToReturn, err
 	}
 
 	// Set headers (adjust content type as needed)
@@ -96,13 +92,13 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		return userAnswers, err
+		return answerToReturn, err
 	}
 
 	defer res.Body.Close()
 	body, readErr := ioutil.ReadAll(res.Body)
 	if readErr != nil {
-		return userAnswers, err
+		return answerToReturn, err
 	}
 
 	type responseStruct struct {
@@ -111,12 +107,12 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 		Answer          string  `json:"answer"`
 		ReferenceAnswer string  `json:"reference_answer"`
 		Grade           float64 `json:"grade"`
-		AnswerDuration  int     `json:"answer_duration"`
+		AnswerDuration  int64   `json:"answer_duration"`
 	}
 
 	type responseObject struct {
 		Message string           `json:"message"`
-		Code    int              `json:"code"`
+		Code    int64            `json:"code"`
 		Status  string           `json:"status"`
 		Data    []responseStruct `json:"data"`
 	}
@@ -125,18 +121,18 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	err = json.Unmarshal(body, &responseData)
 
 	if err != nil {
-		return userAnswers, err
+		return answerToReturn, err
 	}
 
 	var answerPayloads []Answer
 	var answerPayload Answer
 
 	for _, data := range responseData.Data {
-		answerPayload.QuestionId = data.QuestionId
+		answerPayload.QuestionID = data.QuestionId
 		answerPayload.ID = data.AnswerId
-		answerPayload.UserId = userId
+		answerPayload.UserID = userId
 		answerPayload.Grade = data.Grade
-		answerPayload.Answer = data.Answer
+		answerPayload.AnswerText = data.Answer
 		answerPayload.AnswerDuration = data.AnswerDuration
 
 		var label string
@@ -148,11 +144,12 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 
 		answerPayload.Label = label
 		answerPayload.Status = "evaluated"
+		answerPayload.UpdatedAt = time.Now()
 
 		answerPayloads = append(answerPayloads, answerPayload)
 	}
 
-	updatedAnswer, err := s.repository.Update(answerPayloads)
+	updatedAnswer, err := s.repository.Update(answerPayloads, "answers")
 
 	if err != nil {
 		return updatedAnswer, err
@@ -161,7 +158,7 @@ func (s *service) FinishAnswer(quizId string, userId int) ([]Answer, error) {
 	return updatedAnswer, nil
 }
 
-func (s *service) GetFinishedAnswer(quizId string, userID int) ([]Answer, error) {
+func (s *service) GetFinishedAnswer(quizId string, userID string) ([]AnswerWithQuestion, error) {
 	userAnswers, err := s.repository.GetUserAnswers(quizId, userID)
 
 	if err != nil {

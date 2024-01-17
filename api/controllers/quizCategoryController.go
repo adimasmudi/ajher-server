@@ -4,7 +4,6 @@ import (
 	"ajher-server/internal/quizCategory"
 	"ajher-server/utils"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -90,13 +89,7 @@ func (h *quizCategoryHandler) GetAll(ctx *gin.Context) {
 // @Success  200   {object} quizCategory.QuizCategory
 // @Router   /quizCategory/{id} [get]
 func (h *quizCategoryHandler) GetById(ctx *gin.Context) {
-	quizCategoryId, err := strconv.Atoi(ctx.Param("id"))
-
-	if err != nil {
-		response := utils.APIResponse("Get Quiz Category Failed", http.StatusBadRequest, "error", err.Error())
-		ctx.JSON(http.StatusBadRequest, response)
-		return
-	}
+	quizCategoryId := ctx.Param("id")
 
 	quizCategory, err := h.quizCategoryService.GetById(quizCategoryId)
 

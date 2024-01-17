@@ -2,13 +2,14 @@ package quizCategory
 
 import (
 	"errors"
+	"time"
 )
 
 type Service interface {
 	Save(input QuizCategoryInput) (QuizCategory, error)
 	Update(input QuizCategoryInput) (QuizCategory, error)
-	Delete(ID int) (QuizCategory, error)
-	GetById(ID int) (QuizCategory, error)
+	Delete(ID string) (QuizCategory, error)
+	GetById(ID string) (QuizCategory, error)
 	GetAll() ([]QuizCategory, error)
 }
 
@@ -25,8 +26,10 @@ func (s *service) Save(input QuizCategoryInput) (QuizCategory, error) {
 
 	quizCategory.CategoryName = input.CategoryName
 	quizCategory.Description = input.Description
+	quizCategory.CreatedAt = time.Now()
+	quizCategory.UpdatedAt = time.Now()
 
-	newQuizCategory, err := s.repository.Save(quizCategory)
+	newQuizCategory, err := s.repository.Save(quizCategory, "quizCategories")
 
 	if err != nil {
 		return quizCategory, err
@@ -40,8 +43,9 @@ func (s *service) Update(input QuizCategoryInput) (QuizCategory, error) {
 
 	quizCategory.CategoryName = input.CategoryName
 	quizCategory.Description = input.Description
+	quizCategory.UpdatedAt = time.Now()
 
-	newQuizCategory, err := s.repository.Update(quizCategory)
+	newQuizCategory, err := s.repository.Update(quizCategory, "quizCategories")
 
 	if err != nil {
 		return quizCategory, err
@@ -50,14 +54,14 @@ func (s *service) Update(input QuizCategoryInput) (QuizCategory, error) {
 	return newQuizCategory, nil
 }
 
-func (s *service) Delete(ID int) (QuizCategory, error) {
-	quizCategory, err := s.repository.GetById(ID)
+func (s *service) Delete(ID string) (QuizCategory, error) {
+	quizCategory, err := s.repository.GetById(ID, "quizCategories")
 
 	if err != nil {
 		return quizCategory, errors.New("quiz category with the given id does't exist")
 	}
 
-	deletedQuizCategory, err := s.repository.Delete(ID)
+	deletedQuizCategory, err := s.repository.Delete(ID, "quizCategories")
 
 	if err != nil {
 		return quizCategory, err
@@ -66,8 +70,8 @@ func (s *service) Delete(ID int) (QuizCategory, error) {
 	return deletedQuizCategory, nil
 }
 
-func (s *service) GetById(ID int) (QuizCategory, error) {
-	quizCategory, err := s.repository.GetById(ID)
+func (s *service) GetById(ID string) (QuizCategory, error) {
+	quizCategory, err := s.repository.GetById(ID, "quizCategories")
 
 	if err != nil {
 		return quizCategory, errors.New("quiz category with the given id does't exist")
@@ -77,7 +81,7 @@ func (s *service) GetById(ID int) (QuizCategory, error) {
 }
 
 func (s *service) GetAll() ([]QuizCategory, error) {
-	quizCategories, err := s.repository.GetAll()
+	quizCategories, err := s.repository.GetAll("quizCategories")
 
 	if err != nil {
 		return quizCategories, err

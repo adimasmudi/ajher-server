@@ -2,6 +2,7 @@ package question
 
 import (
 	"ajher-server/utils"
+	"time"
 )
 
 type Service interface {
@@ -24,25 +25,20 @@ func (s *service) Save(input AddQuestionInputs) ([]Question, error) {
 	for _, questionData := range input.Questions {
 		question := Question{}
 
-		questionId, err := utils.GeneratedUUID()
-
-		if err != nil {
-			return questions, err
-		}
-
 		theDuration, err := utils.ConvertStringDurationIntoInteger(questionData.Duration)
 
 		if err != nil {
 			return questions, err
 		}
 
-		question.ID = questionId
 		question.Question = questionData.Question
-		question.Duration = theDuration
+		question.Duration = int64(theDuration)
 		question.GradePercentage = questionData.GradePercentage
 		question.ReferenceAnswer = questionData.ReferenceAnswer
 		question.Status = "active"
 		question.QuizId = input.QuizId
+		question.CreatedAt = time.Now()
+		question.UpdatedAt = time.Now()
 
 		questionPoint := utils.CalculatePoint(question.Question)
 
@@ -51,7 +47,7 @@ func (s *service) Save(input AddQuestionInputs) ([]Question, error) {
 		questions = append(questions, question)
 	}
 
-	newQuestions, err := s.repository.Save(questions)
+	newQuestions, err := s.repository.Save(questions, "questions")
 
 	if err != nil {
 		return newQuestions, err

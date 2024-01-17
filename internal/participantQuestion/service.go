@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GetQuestionByEachNumber(userId int, quizId string) ([]ParticipantQuestion, error)
+	GetQuestionByEachNumber(userId string, quizId string) ([]ParticipantQuestion, error)
 }
 
 type service struct {
@@ -20,21 +20,21 @@ func NewService(repository Repository, userRepository user.Repository, participa
 	return &service{repository, userRepository, participationRepository}
 }
 
-func (s *service) GetQuestionByEachNumber(userId int, quizId string) ([]ParticipantQuestion, error) {
+func (s *service) GetQuestionByEachNumber(userId string, quizId string) ([]ParticipantQuestion, error) {
 	var participationQuestion []ParticipantQuestion
-	user, err := s.userRepository.GetById(userId)
+	user, err := s.userRepository.GetById(userId, "users")
 
 	if err != nil {
 		return participationQuestion, errors.New("user doesn't exist")
 	}
 
-	participation, err := s.participationRepository.GetByUserId(user.ID)
+	participation, err := s.participationRepository.GetByUserId(user.ID, "participations")
 
 	if err != nil {
 		return participationQuestion, errors.New("this user never participated yet")
 	}
 
-	participationQuestion, err = s.repository.GetByParticipantId(participation.ID)
+	participationQuestion, err = s.repository.GetByParticipantId(participation.ID, "participantQuestions")
 
 	if err != nil {
 		return participationQuestion, err

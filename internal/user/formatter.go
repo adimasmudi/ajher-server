@@ -3,7 +3,7 @@ package user
 import "time"
 
 type UserFormatter struct {
-	ID        int       `json:"userId"`
+	ID        string    `json:"userId"`
 	FullName  string    `json:"name"`
 	Email     string    `json:"email"`
 	Picture   string    `json:"picture"`

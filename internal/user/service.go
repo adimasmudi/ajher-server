@@ -15,7 +15,7 @@ import (
 type Service interface {
 	Register(input RegisterUserInput) (User, error)
 	Login(input LoginUserInput) (User, error)
-	GetUserById(userId int) (User, error)
+	GetUserById(userId string) (User, error)
 	GoogleAuth(input GoogleOAuthInput) (User, error)
 	GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error)
 	ChangePassword(input ChangePasswordUserInput) (User, error)
@@ -36,10 +36,23 @@ func (s *service) Register(input RegisterUserInput) (User, error) {
 	if !utils.IsEmailValid(input.Email) {
 		return user, errors.New("email is not valid")
 	}
+
+	user, err := s.repository.FindByEmail(input.Email, "users")
+
+	if err != nil {
+		return user, err
+	}
+
+	if user.ID != "" {
+		return user, errors.New("user already exist")
+	}
+
 	user.Email = input.Email
 	user.Username = input.Username
 	user.FullName = input.Username
 	user.LastLogin = time.Now()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
 
@@ -49,7 +62,7 @@ func (s *service) Register(input RegisterUserInput) (User, error) {
 
 	user.Password = string(passwordHash)
 
-	newUser, err := s.repository.Save(user)
+	newUser, err := s.repository.Save(user, "users")
 
 	if err != nil {
 		return newUser, err
@@ -59,14 +72,10 @@ func (s *service) Register(input RegisterUserInput) (User, error) {
 }
 
 func (s *service) Login(input LoginUserInput) (User, error) {
-	user, err := s.repository.FindByEmail(input.Email)
+	user, err := s.repository.FindByEmail(input.Email, "users")
 
 	if err != nil {
 		return user, errors.New("user with that email doesn't exist")
-	}
-
-	if user.ID == 0 {
-		return user, errors.New("User Not Found")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
@@ -76,8 +85,9 @@ func (s *service) Login(input LoginUserInput) (User, error) {
 	}
 
 	user.LastLogin = time.Now()
+	user.UpdatedAt = time.Now()
 
-	newUpdatedLoginUser, err := s.repository.Update(user)
+	newUpdatedLoginUser, err := s.repository.Update(user, "users")
 
 	if err != nil {
 		return newUpdatedLoginUser, err
@@ -86,14 +96,14 @@ func (s *service) Login(input LoginUserInput) (User, error) {
 	return user, nil
 }
 
-func (s *service) GetUserById(userId int) (User, error) {
-	user, err := s.repository.GetById(userId)
+func (s *service) GetUserById(userId string) (User, error) {
+	user, err := s.repository.GetById(userId, "users")
 
 	if err != nil {
 		return user, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == "" {
 		return user, errors.New("user with that id doesn't exist")
 	}
 
@@ -116,14 +126,14 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 	googleUser.Picture = response.Audience
 	googleUser.VerifiedEmail = response.VerifiedEmail
 
-	isUserExist, err := s.repository.FindByEmail(googleUser.Email)
+	isUserExist, err := s.repository.FindByEmail(googleUser.Email, "users")
 
-	fmt.Println(isUserExist, err)
-
-	if err == nil && isUserExist.ID != 0 {
+	if err == nil && isUserExist.ID != "" {
+		isUserExist.ID = "document_id_from_firestore"
 		isUserExist.LastLogin = time.Now()
+		isUserExist.UpdatedAt = time.Now()
 
-		newUpdatedLoginUser, err := s.repository.Update(isUserExist)
+		newUpdatedLoginUser, err := s.repository.Update(isUserExist, "users")
 
 		if err != nil {
 			return newUpdatedLoginUser, err
@@ -138,8 +148,10 @@ func (s *service) GoogleAuth(input GoogleOAuthInput) (User, error) {
 	user.FullName = userName
 	user.Picture = googleUser.Picture
 	user.LastLogin = time.Now()
+	user.CreatedAt = time.Now()
+	user.UpdatedAt = time.Now()
 
-	newUser, err := s.repository.Save(user)
+	newUser, err := s.repository.Save(user, "users")
 
 	if err != nil {
 		return newUser, err
@@ -154,13 +166,13 @@ func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error
 		return otp, errors.New("email is not valid")
 	}
 
-	user, err := s.repository.FindByEmail(input.Email)
+	user, err := s.repository.FindByEmail(input.Email, "users")
 
 	if err != nil {
 		return otp, err
 	}
 
-	if user.ID == 0 {
+	if user.ID == "" {
 		return otp, errors.New("user with that email doesn't exist")
 	}
 
@@ -182,7 +194,7 @@ func (s *service) GenerateAndSendEmail(input ResetPasswordInput) (otp.Otp, error
 	otp.Status = "valid"
 	otp.ValidUntil = time.Now().UTC().Add(time.Minute)
 
-	savedOtp, err := s.otpRepository.Save(otp)
+	savedOtp, err := s.otpRepository.Save(otp, "otps")
 
 	if err != nil {
 		return otp, err
@@ -197,13 +209,13 @@ func (s *service) ChangePassword(input ChangePasswordUserInput) (User, error) {
 	if input.Password != input.ConfirmPassword {
 		return user, errors.New("password is not same with confirm password")
 	}
-	otp, err := s.otpRepository.FindByOtpCode(input.OtpCode)
+	_, err := s.otpRepository.FindByOtpCode(input.OtpCode, "otps")
 
 	if err != nil {
 		return user, err
 	}
 
-	oldUser, err := s.repository.GetById(otp.UserId)
+	oldUser, err := s.repository.GetById("document_id_from_firestore", "users")
 
 	if err != nil {
 		return user, err
@@ -216,8 +228,9 @@ func (s *service) ChangePassword(input ChangePasswordUserInput) (User, error) {
 	}
 
 	oldUser.Password = string(passwordHash)
+	oldUser.UpdatedAt = time.Now()
 
-	newUser, err := s.repository.Update(oldUser)
+	newUser, err := s.repository.Update(oldUser, "users")
 
 	if err != nil {
 		return user, err

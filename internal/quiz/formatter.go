@@ -47,7 +47,7 @@ func getTotalPoint(questions []question.Question) float64 {
 
 func getTotalTime(questions []question.Question) string {
 
-	seconds := 0
+	var seconds int64 = 0
 
 	for _, question := range questions {
 		seconds += question.Duration

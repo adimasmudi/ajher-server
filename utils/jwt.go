@@ -11,7 +11,7 @@ import (
 
 var SECRET_KEY = []byte(os.Getenv("JWT_SECRET_KEY"))
 
-func GenerateToken(userID int) (interface{}, error) {
+func GenerateToken(userID string) (interface{}, error) {
 	accessToken, err := generateAccessToken(userID)
 
 	if err != nil {
@@ -27,7 +27,7 @@ func GenerateToken(userID int) (interface{}, error) {
 	return gin.H{"accessToken": accessToken, "refreshToken": refreshToken}, err
 }
 
-func generateAccessToken(userID int) (string, error) {
+func generateAccessToken(userID string) (string, error) {
 	claim := jwt.MapClaims{}
 	claim["user_id"] = userID
 	claim["exp"] = time.Now().Add(time.Hour).Unix()
@@ -43,7 +43,7 @@ func generateAccessToken(userID int) (string, error) {
 	return signedToken, nil
 }
 
-func generateRefreshToken(userID int) (string, error) {
+func generateRefreshToken(userID string) (string, error) {
 	claim := jwt.MapClaims{}
 
 	claim["exp"] = time.Now().Add(time.Hour * 2160).Unix() // refresh token active for 3 months

@@ -6,11 +6,11 @@ import (
 )
 
 type Participation struct {
-	ID        string    `json:"id"`
-	UserId    int       `json:"user_id"`
-	QuizId    string    `json:"quiz_id"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	User      user.User
+	ID        string    `json:"id" firestore:"-"`
+	UserId    string    `json:"user_id" firestore:"userId"`
+	QuizId    string    `json:"quiz_id" firestore:"quizId"`
+	Status    string    `json:"status" firestore:"status"`
+	CreatedAt time.Time `json:"created_at" firestore:"createdAt"`
+	UpdatedAt time.Time `json:"updated_at" firestore:"updatedAt"`
+	User      user.User `firestore:"user"`
 }

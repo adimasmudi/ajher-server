@@ -3,7 +3,7 @@ package answer
 type AnswerQuestionInput struct {
 	QuestionId     string `json:"question_id"`
 	Answer         string `json:"answer"`
-	AnswerDuration int    `json:"answer_duration"`
+	AnswerDuration int64  `json:"answer_duration"`
 }
 
 type AnswerToCorrect struct {
@@ -11,5 +11,5 @@ type AnswerToCorrect struct {
 	AnswerId        string `json:"answer_id"`
 	Answer          string `json:"answer"`
 	ReferenceAnswer string `json:"reference_answer"`
-	AnswerDuration  int    `json:"answer_duration"`
+	AnswerDuration  int64  `json:"answer_duration"`
 }

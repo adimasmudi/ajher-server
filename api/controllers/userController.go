@@ -270,7 +270,7 @@ func (h *userHandler) RefreshToken(ctx *gin.Context) {
 		return
 	}
 
-	userId := int(claims["user_id"].(float64))
+	userId := claims["user_id"].(string)
 
 	user, err := h.userService.GetUserById(userId)
 

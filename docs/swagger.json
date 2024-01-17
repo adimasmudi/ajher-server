@@ -762,11 +762,11 @@
         "answer.Answer": {
             "type": "object",
             "properties": {
-                "answer": {
-                    "type": "string"
-                },
                 "answer_duration": {
                     "type": "integer"
+                },
+                "answer_text": {
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string"
@@ -783,9 +783,6 @@
                 "label": {
                     "type": "string"
                 },
-                "question": {
-                    "$ref": "#/definitions/question.Question"
-                },
                 "question_id": {
                     "type": "string"
                 },
@@ -796,7 +793,7 @@
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -975,7 +972,7 @@
                     "type": "string"
                 },
                 "quiz_category_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -1013,7 +1010,7 @@
                     "$ref": "#/definitions/quizCategory.QuizCategory"
                 },
                 "quiz_category_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"
@@ -1042,7 +1039,7 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -1158,7 +1155,7 @@
             "type": "object",
             "properties": {
                 "ID": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string"

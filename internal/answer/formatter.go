@@ -2,17 +2,17 @@ package answer
 
 type FinishAnswerFormatter struct {
 	Point                float64 `json:"point"`
-	CorrectAnswer        int     `json:"correct_answer"`
+	CorrectAnswer        int64   `json:"correct_answer"`
 	CompletionPercentage float64 `json:"completion_percentage"`
-	Skipped              int     `json:"skipped"`
-	IncorrectAnswer      int     `json:"incorrect_answer"`
+	Skipped              int64   `json:"skipped"`
+	IncorrectAnswer      int64   `json:"incorrect_answer"`
 }
 
-func FormatFinishAnswer(answers []Answer) FinishAnswerFormatter {
+func FormatFinishAnswer(answers []AnswerWithQuestion) FinishAnswerFormatter {
 	points := 0.0
-	correctAnswers := 0
-	skipped := 0
-	incorrectAnswers := 0
+	var correctAnswers int64 = 0
+	var skipped int64 = 0
+	var incorrectAnswers int64 = 0
 	for _, data := range answers {
 		if data.Label == "right" {
 			points += data.Question.Point
@@ -21,12 +21,12 @@ func FormatFinishAnswer(answers []Answer) FinishAnswerFormatter {
 			incorrectAnswers += 1
 		}
 
-		if data.Answer == "" {
+		if data.AnswerText == "" {
 			skipped++
 		}
 	}
 
-	completionPercentage := float64((1 - (skipped / len(answers))) * 100)
+	completionPercentage := float64((1 - (skipped / int64(len(answers)))) * 100)
 
 	formatter := FinishAnswerFormatter{
 		Point:                points,

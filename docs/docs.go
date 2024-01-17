@@ -773,11 +773,11 @@ const docTemplate = `{
         "answer.Answer": {
             "type": "object",
             "properties": {
-                "answer": {
-                    "type": "string"
-                },
                 "answer_duration": {
                     "type": "integer"
+                },
+                "answer_text": {
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string"
@@ -794,9 +794,6 @@ const docTemplate = `{
                 "label": {
                     "type": "string"
                 },
-                "question": {
-                    "$ref": "#/definitions/question.Question"
-                },
                 "question_id": {
                     "type": "string"
                 },
@@ -807,7 +804,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user_id": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -986,7 +983,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "quiz_category_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "title": {
                     "type": "string"
@@ -1024,7 +1021,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/quizCategory.QuizCategory"
                 },
                 "quiz_category_id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "status": {
                     "type": "string"
@@ -1053,7 +1050,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
@@ -1169,7 +1166,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "ID": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "created_at": {
                     "type": "string"

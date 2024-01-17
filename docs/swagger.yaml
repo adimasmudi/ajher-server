@@ -1,10 +1,10 @@
 definitions:
   answer.Answer:
     properties:
-      answer:
-        type: string
       answer_duration:
         type: integer
+      answer_text:
+        type: string
       created_at:
         type: string
       generated_suggestion:
@@ -15,8 +15,6 @@ definitions:
         type: string
       label:
         type: string
-      question:
-        $ref: '#/definitions/question.Question'
       question_id:
         type: string
       status:
@@ -24,7 +22,7 @@ definitions:
       updated_at:
         type: string
       user_id:
-        type: integer
+        type: string
     type: object
   answer.AnswerQuestionInput:
     properties:
@@ -138,7 +136,7 @@ definitions:
       description:
         type: string
       quiz_category_id:
-        type: integer
+        type: string
       title:
         type: string
     required:
@@ -165,7 +163,7 @@ definitions:
           $ref: '#/definitions/question.Question'
         type: array
       quiz_category_id:
-        type: integer
+        type: string
       quizCategory:
         $ref: '#/definitions/quizCategory.QuizCategory'
       status:
@@ -186,7 +184,7 @@ definitions:
       icon:
         type: string
       id:
-        type: integer
+        type: string
       updated_at:
         type: string
     type: object
@@ -263,7 +261,7 @@ definitions:
   user.User:
     properties:
       ID:
-        type: integer
+        type: string
       created_at:
         type: string
       email:

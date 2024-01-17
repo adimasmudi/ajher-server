@@ -39,7 +39,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	db := database.ConnectDB()
+	db := database.FirestoreConnection()
 
 	router := gin.Default()
 	router.Use(cors.Default())

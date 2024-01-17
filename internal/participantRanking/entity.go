@@ -5,13 +5,13 @@ import (
 )
 
 type ParticipantRanking struct {
-	ID              string    `json:"id"`
-	ParticipationId string    `json:"participation_id"`
-	RankingId       int       `json:"ranking_id"`
-	Grade           float64   `json:"grade"`
-	Point           int       `json:"point"`
-	Note            string    `json:"note"`
-	Position        int       `json:"position"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	ID              string    `json:"id" firestore:"-"`
+	ParticipationId string    `json:"participation_id" firestore:"participantId"`
+	RankingId       int64     `json:"ranking_id" firestore:"rankingId"`
+	Grade           float64   `json:"grade" firestore:"grade"`
+	Point           int64     `json:"point" firestore:"point"`
+	Note            string    `json:"note" firestore:"note"`
+	Position        int64     `json:"position" firestore:"position"`
+	CreatedAt       time.Time `json:"created_at" firestore:"createdAt"`
+	UpdatedAt       time.Time `json:"updated_at" firestore:"updatedAt"`
 }

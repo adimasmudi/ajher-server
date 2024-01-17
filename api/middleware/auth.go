@@ -57,7 +57,7 @@ func (a *authMiddleware) AuthMiddleware(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, response)
 	}
 
-	userId := int(claims["user_id"].(float64))
+	userId := claims["user_id"].(string)
 
 	user, err := a.userService.GetUserById(userId)
 

@@ -3,12 +3,12 @@ package participantQuestion
 type QuestionFormatter struct {
 	ID              string  `json:"id"`
 	QuizId          string  `json:"quiz_id"`
-	Number          int     `json:"number"`
+	Number          int64   `json:"number"`
 	Question        string  `json:"question"`
 	GradePercentage float64 `json:"grade_percentage"`
 	Point           float64 `json:"point"`
 	Status          string  `json:"status"`
-	Duration        int     `json:"duration"`
+	Duration        int64   `json:"duration"`
 }
 
 func FormatQuestion(participantQuestion []ParticipantQuestion) []QuestionFormatter {

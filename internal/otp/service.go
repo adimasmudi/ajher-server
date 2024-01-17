@@ -19,13 +19,13 @@ func NewService(repository Repository) *service {
 
 func (s *service) VerifyOtp(input VerifyOtpInput) (Otp, error) {
 
-	otp, err := s.repository.FindByOtpCode(input.OtpCode)
+	otp, err := s.repository.FindByOtpCode(input.OtpCode, "otps")
 
 	if err != nil {
 		return otp, err
 	}
 
-	if otp.ID == 0 {
+	if otp.ID == "" {
 		return otp, errors.New("otp code is not found")
 	}
 
@@ -38,7 +38,8 @@ func (s *service) VerifyOtp(input VerifyOtpInput) (Otp, error) {
 	}
 
 	otp.Status = "invalid"
-	updatedOtp, err := s.repository.Update(otp)
+	otp.UpdatedAt = time.Now()
+	updatedOtp, err := s.repository.Update(otp, "otps")
 
 	if err != nil {
 		return otp, err
