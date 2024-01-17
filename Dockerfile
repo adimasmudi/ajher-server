@@ -18,3 +18,5 @@ RUN go build -o ./out/dist .
 
 # Set the command to run the executable
 CMD ["./out/dist"]
+
+EXPOSE 5000
