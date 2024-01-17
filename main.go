@@ -27,18 +27,25 @@ import (
 
 func main() {
 
-	docs.SwaggerInfo.Title = "Ajher API"
-	docs.SwaggerInfo.Description = "Ajher Backend API documentation"
-	docs.SwaggerInfo.Version = "1.0"
-	docs.SwaggerInfo.Host = "localhost:5000"
-	docs.SwaggerInfo.BasePath = "/api/v1"
-	docs.SwaggerInfo.Schemes = []string{"http"}
-
 	err := godotenv.Load()
 
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	host := os.Getenv("SWAGGER_HOST")
+	scheme := []string{"https"}
+	if host == "" {
+		host = "localhost:5000"
+		scheme = []string{"http"}
+	}
+
+	docs.SwaggerInfo.Title = "Ajher API"
+	docs.SwaggerInfo.Description = "Ajher Backend API documentation"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = host
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = scheme
 
 	db := database.FirestoreConnection()
 

@@ -39,7 +39,7 @@ func (r *repository) GetByQuizId(quizId string, collectionName string) (Particip
 	var participation Participation
 
 	// Assuming you have a collection named "participations"
-	iter := r.db.Collection(collectionName).Where("quizId", "==", quizId).Limit(1).Documents(context.Background())
+	iter := r.db.Collection(collectionName).Where("quizId", "==", quizId).Where("status", "==", "creator").Limit(1).Documents(context.Background())
 
 	// Iterate over the result set
 	for {
