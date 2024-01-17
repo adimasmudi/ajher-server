@@ -13,8 +13,8 @@ RUN go mod download
 # Copy the entire application source code into the container
 COPY . .
 
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+# Build the Go application with debugging information
+RUN CGO_ENABLED=0 GOOS=linux go build -o app -gcflags "all=-N -l" .
 
 # Use a smaller base image for the final image
 FROM alpine:latest
