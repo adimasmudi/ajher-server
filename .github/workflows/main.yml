@@ -49,6 +49,16 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
+      - name: Debugging
+        run: |
+          echo "gcloud run deploy ajher-server \
+            --image gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
+            --platform managed \
+            --region asia-southeast2 \
+            --memory 4Gi \
+            --allow-unauthenticated \
+            --update-env-vars JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }},OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }},OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }},REDIRECT_URL=${{ secrets.REDIRECT_URL }},CONFIG_SMTP_HOST=${{ secrets.CONFIG_SMTP_HOST }},CONFIG_SMTP_PORT=${{ secrets.CONFIG_SMTP_PORT }},CONFIG_SENDER_NAME=${{ secrets.CONFIG_SENDER_NAME }},CONFIG_AUTH_EMAIL=${{ secrets.CONFIG_AUTH_EMAIL }},CONFIG_AUTH_PASSWORD=${{ secrets.CONFIG_AUTH_PASSWORD }},MODEL_SERVICE_URL=${{ secrets.MODEL_SERVICE_URL }},FIRESTORE_PROJECT_ID=${{ secrets.FIRESTORE_PROJECT_ID }},FIREBASE_SERVICE_ACCOUNT_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }},SWAGGER_HOST=${{ secrets.SWAGGER_HOST }}"
+
       - name: Deploy to Google Cloud Run
         run: |
           gcloud run deploy ajher-server \
@@ -57,4 +67,4 @@ jobs:
             --region asia-southeast2 \
             --memory 4Gi \
             --allow-unauthenticated \
-            --update-env-vars JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }},OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }},OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }},REDIRECT_URL=${{ secrets.REDIRECT_URL }},CONFIG_SMTP_HOST=${{ secrets.CONFIG_SMTP_HOST }},CONFIG_SMTP_PORT=${{ secrets.CONFIG_SMTP_PORT }},CONFIG_SENDER_NAME=${{ secrets.CONFIG_SENDER_NAME }},CONFIG_AUTH_EMAIL=${{ secrets.CONFIG_AUTH_EMAIL }},CONFIG_AUTH_PASSWORD=${{ secrets.CONFIG_AUTH_PASSWORD }},MODEL_SERVICE_URL=${{ secrets.MODEL_SERVICE_URL }},FIRESTORE_PROJECT_ID=${{ secrets.FIRESTORE_PROJECT_ID }},FIREBASE_SERVICE_ACCOUNT_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }},SWAGGER_HOST=${{ secrets.SWAGGER_HOST }}
+            --update-env-vars JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}",OAUTH_CLIENT_ID="${{ secrets.OAUTH_CLIENT_ID }}",OAUTH_CLIENT_SECRET="${{ secrets.OAUTH_CLIENT_SECRET }}",REDIRECT_URL="${{ secrets.REDIRECT_URL }}",CONFIG_SMTP_HOST="${{ secrets.CONFIG_SMTP_HOST }}",CONFIG_SMTP_PORT="${{ secrets.CONFIG_SMTP_PORT }}",CONFIG_SENDER_NAME="${{ secrets.CONFIG_SENDER_NAME }}",CONFIG_AUTH_EMAIL="${{ secrets.CONFIG_AUTH_EMAIL }}",CONFIG_AUTH_PASSWORD="${{ secrets.CONFIG_AUTH_PASSWORD }}",MODEL_SERVICE_URL="${{ secrets.MODEL_SERVICE_URL }}",FIRESTORE_PROJECT_ID="${{ secrets.FIRESTORE_PROJECT_ID }}",FIREBASE_SERVICE_ACCOUNT_PATH="${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }}",SWAGGER_HOST="${{ secrets.SWAGGER_HOST }}"
