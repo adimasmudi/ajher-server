@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"ajher-server/api/controllers"
 	"ajher-server/api/middleware"
@@ -112,6 +113,6 @@ func main() {
 	answerRoute.POST("/finish/:quizId", authMiddleware.AuthMiddleware, answerHandler.FinishAnswer)
 	answerRoute.GET("/getFinished/:quizId", authMiddleware.AuthMiddleware, answerHandler.GetFinished)
 
-	router.Run(":5000")
+	router.Run(os.Getenv("PORT"))
 
 }

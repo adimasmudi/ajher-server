@@ -1,4 +1,4 @@
-name: CI/CD for Flask Ajher Model
+name: CI/CD for Golang Ajher Server
 
 on:
   push:
