@@ -113,6 +113,10 @@ func main() {
 	answerRoute.POST("/finish/:quizId", authMiddleware.AuthMiddleware, answerHandler.FinishAnswer)
 	answerRoute.GET("/getFinished/:quizId", authMiddleware.AuthMiddleware, answerHandler.GetFinished)
 
-	router.Run(":" + os.Getenv("PORT"))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	router.Run(":" + port)
 
 }

@@ -51,7 +51,7 @@ jobs:
 
       - name: Deploy to Google Cloud Run
         run: |
-          gcloud beta run deploy ajher-server \
+          gcloud run deploy ajher-server \
             --image=gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
             --platform=managed \
             --region=asia-southeast2 \
