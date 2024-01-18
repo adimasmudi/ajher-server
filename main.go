@@ -26,6 +26,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting the application...")
 
 	err := godotenv.Load()
 
@@ -47,7 +48,11 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	docs.SwaggerInfo.Schemes = scheme
 
+	log.Println("Swagger configured successfully...")
+
 	db := database.FirestoreConnection()
+
+	log.Println("Database Connection Success...")
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -90,6 +95,8 @@ func main() {
 	// auth middleware
 	authMiddleware := middleware.NewAuthMiddleware(userService)
 
+	log.Println("Project setup success...")
+
 	// user routes
 	userRoute.POST("/register", userHandler.Register)
 	userRoute.POST("/login", userHandler.Login)
@@ -120,10 +127,16 @@ func main() {
 	answerRoute.POST("/finish/:quizId", authMiddleware.AuthMiddleware, answerHandler.FinishAnswer)
 	answerRoute.GET("/getFinished/:quizId", authMiddleware.AuthMiddleware, answerHandler.GetFinished)
 
+	log.Println("Ready to serve...")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "5000"
 	}
-	router.Run(":" + port)
+	// Start the server
+	err = router.Run(":" + port)
+	if err != nil {
+		log.Fatal("Error starting the server: ", err)
+	}
 
 }
