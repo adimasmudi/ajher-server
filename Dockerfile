@@ -13,8 +13,6 @@ RUN go mod download
 # Copy the entire application source code into the container
 COPY . .
 
-EXPOSE 5000
-
 # Build the Go application
 RUN go build -o ./out/dist .
 

@@ -131,7 +131,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "5000"
+		port = "8080"
 	}
 	// Start the server
 	err = router.Run(":" + port)
