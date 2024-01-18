@@ -37,9 +37,8 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build --platform linux/amd64 -t gcr.io/ajher-409804/ajher_server:${{ github.sha }} .
-          docker tag gcr.io/ajher-409804/ajher_server:${{ github.sha }} gcr.io/ajher-409804/ajher_server:latest
-          docker push gcr.io/ajher-409804/ajher_server:${{ github.sha }}
+          docker build --platform linux/amd64 -t gcr.io/ajher-409804/ajher_server:latest .
+          docker tag gcr.io/ajher-409804/ajher_server:latest
           docker push gcr.io/ajher-409804/ajher_server:latest
 
   deploy:
@@ -73,7 +72,7 @@ jobs:
       - name: Deploy to Google Cloud Run
         run: |
           gcloud run deploy ajher-server \
-            --image gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
+            --image gcr.io/ajher-409804/ajher_server:latest \
             --platform managed\
             --region asia-southeast2 \
             --memory 2Gi \
