@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker buildx build --build-args=GITIGNORE=true -t gcr.io/ajher-409804/ajher_server:${{ github.sha }} .
+          docker buildx build --build-args=GITIGNORE=true --platform linux/amd64 -t gcr.io/ajher-409804/ajher_server:${{ github.sha }} .
           docker tag gcr.io/ajher-409804/ajher_server:${{ github.sha }} gcr.io/ajher-409804/ajher_server:latest
           docker push gcr.io/ajher-409804/ajher_server:${{ github.sha }}
           docker push gcr.io/ajher-409804/ajher_server:latest
