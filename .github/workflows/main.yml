@@ -37,8 +37,9 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build --platform linux/amd64 -t gcr.io/ajher-409804/ajher_server:latest .
-          docker tag gcr.io/ajher-409804/ajher_server:latest
+          docker rmi --force ajher_server:latest
+          docker build --platform linux/amd64 -t ajher_server:latest . --no-cache
+          docker tag ajher_server gcr.io/ajher-409804/ajher_server:latest
           docker push gcr.io/ajher-409804/ajher_server:latest
 
   deploy:
@@ -58,8 +59,8 @@ jobs:
 
       - name: Debugging
         run: |
-          echo "gcloud run deploy ajher-server \
-            --image gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
+          echo "gcloud run deploy ajher-server:latest \
+            --image gcr.io/ajher-409804/ajher_server \
             --platform managed \
             --region asia-southeast2 \
             --memory 2Gi \
@@ -67,7 +68,7 @@ jobs:
             --update-env-vars JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }},OAUTH_CLIENT_ID=${{ secrets.OAUTH_CLIENT_ID }},OAUTH_CLIENT_SECRET=${{ secrets.OAUTH_CLIENT_SECRET }},REDIRECT_URL=${{ secrets.REDIRECT_URL }},CONFIG_SMTP_HOST=${{ secrets.CONFIG_SMTP_HOST }},CONFIG_SMTP_PORT=${{ secrets.CONFIG_SMTP_PORT }},CONFIG_SENDER_NAME=${{ secrets.CONFIG_SENDER_NAME }},CONFIG_AUTH_EMAIL=${{ secrets.CONFIG_AUTH_EMAIL }},CONFIG_AUTH_PASSWORD=${{ secrets.CONFIG_AUTH_PASSWORD }},MODEL_SERVICE_URL=${{ secrets.MODEL_SERVICE_URL }},FIRESTORE_PROJECT_ID=${{ secrets.FIRESTORE_PROJECT_ID }},FIREBASE_SERVICE_ACCOUNT_PATH=${{ secrets.FIREBASE_SERVICE_ACCOUNT_PATH }},SWAGGER_HOST=${{ secrets.SWAGGER_HOST }}"
 
       - name: Inspect Docker container
-        run: docker inspect gcr.io/ajher-409804/ajher_server:${{ github.sha }}
+        run: docker inspect gcr.io/ajher-409804/ajher_server:latest
 
       - name: Deploy to Google Cloud Run
         run: |
