@@ -61,7 +61,7 @@ jobs:
         run: |
           echo "gcloud run deploy ajher-server \
             --image gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
-            --platform linux/amd64 \
+            --platform managed \
             --region asia-southeast2 \
             --memory 2Gi \
             --allow-unauthenticated \
@@ -71,7 +71,7 @@ jobs:
         run: |
           gcloud run deploy ajher-server \
             --image gcr.io/ajher-409804/ajher_server:${{ github.sha }} \
-            --platform linux/amd64\
+            --platform managed\
             --region asia-southeast2 \
             --memory 2Gi \
             --allow-unauthenticated \
