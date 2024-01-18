@@ -27,5 +27,5 @@ air
 ### see the documentation in browser
 - see the documentation in http://localhost:5000/docs/index.html
 
-### to see deployed service here is the link : `https://ajher-server-7ofnamsfaq-et.a.run.app/docs/index.html#/`
+### to see deployed service here is the link : https://ajher-server-7ofnamsfaq-et.a.run.app/docs/index.html#/
 ### enjoy🎉
